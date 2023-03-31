@@ -26,12 +26,12 @@ func NewPostgresLineRepository(db *sql.DB) LineRepository {
 func (r *postgresLineRepository) CreateLine(ctx context.Context, line *models.Line) (int64, error) {
 	query := `
 	INSERT INTO lines 
-	    (line_id, code, name, color, text_color, closing_time, opening_time) 
-	VALUES ($1, $2, $3, $4, $5, $6, $7) 
+	    (line_id, code, name, color, text_color, physical_mode, closing_time, opening_time) 
+	VALUES ($1, $2, $3, $4, $5, $6, $7, $8) 
 	RETURNING id`
 	row := r.db.QueryRowContext(ctx, query,
 		line.LineID, line.Code, line.Name,
-		line.Color, line.TextColor, line.ClosingTime, line.OpeningTime)
+		line.Color, line.TextColor, line.PhysicalMode, line.ClosingTime, line.OpeningTime)
 	err := row.Scan(&line.ID)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create line: %v", err)
@@ -43,7 +43,7 @@ func (r *postgresLineRepository) GetLineByLineID(ctx context.Context, id string)
 	query := "SELECT * FROM lines WHERE line_id = $1"
 	row := r.db.QueryRowContext(ctx, query, id)
 	line := &models.Line{}
-	err := row.Scan(&line.ID, &line.LineID, &line.Code, &line.Name, &line.Color, &line.TextColor, &line.ClosingTime, &line.OpeningTime)
+	err := row.Scan(&line.ID, &line.LineID, &line.Code, &line.Name, &line.Color, &line.TextColor, &line.ClosingTime, &line.OpeningTime, &line.PhysicalMode)
 	if err == sql.ErrNoRows {
 		return nil, ErrNoLine
 	}

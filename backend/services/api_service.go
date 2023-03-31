@@ -25,9 +25,9 @@ func NewApiService(db *sql.DB) *ApiService {
 	}
 }
 
-func SendRequest() utility.ApiResponse {
+func SendRequest(url string) utility.ApiResponse {
 	// Create a new request object
-	req, err := http.NewRequest("GET", "https://prim.iledefrance-mobilites.fr/marketplace/navitia/line_reports/coverage/fr-idf/physical_modes/physical_mode:Metro/line_reports", nil)
+	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
 		fmt.Println("Error occurred while creating request:", err)
 		return utility.ApiResponse{}
@@ -124,9 +124,9 @@ func getDisruptionsMap(response utility.ApiResponse) map[string]*models.Disrupti
 	return disruptionsMap
 }
 
-func (s *ApiService) UpdateTraffic(ctx context.Context) {
+func (s *ApiService) UpdateTraffic(ctx context.Context, url string) {
 
-	response := SendRequest()
+	response := SendRequest(url)
 
 	disruptions := getDisruptionsMap(response)
 
@@ -155,13 +155,14 @@ func (s *ApiService) UpdateTraffic(ctx context.Context) {
 			}
 
 			dbLine = &models.Line{
-				LineID:      line.ID,
-				Code:        line.Code,
-				Name:        line.Name,
-				Color:       line.Color,
-				TextColor:   line.TextColor,
-				ClosingTime: closingTime,
-				OpeningTime: openingTime,
+				LineID:       line.ID,
+				Code:         line.Code,
+				Name:         line.Name,
+				PhysicalMode: line.PhysicalModes[0].ID,
+				Color:        line.Color,
+				TextColor:    line.TextColor,
+				ClosingTime:  closingTime,
+				OpeningTime:  openingTime,
 			}
 
 			// Create a new line with the received parameters
@@ -201,6 +202,7 @@ func (s *ApiService) UpdateTraffic(ctx context.Context) {
 					}
 
 					if er == repository.ErrNoDisruption {
+						disruption.LineID = dbLine.LineID
 						_, e := s.DisruptionRepository.CreateDisruption(ctx, disruption)
 						if e != nil {
 							fmt.Println("Error creating line:", er)

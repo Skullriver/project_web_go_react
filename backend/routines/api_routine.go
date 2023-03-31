@@ -28,7 +28,8 @@ func VerifyTraffic(db *sql.DB) {
 		defer cancel()
 
 		apiService := services.NewApiService(db)
-		apiService.UpdateTraffic(ctx)
+		apiService.UpdateTraffic(ctx, os.Getenv("API_REQUEST_METRO"))
+		apiService.UpdateTraffic(ctx, os.Getenv("API_REQUEST_RER"))
 
 		fmt.Println("traffic updated.")
 
