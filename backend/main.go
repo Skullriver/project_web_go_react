@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/Skullriver/Sorbonne_PS3R.git/handlers"
+	"github.com/Skullriver/Sorbonne_PS3R.git/routines"
 	"github.com/gorilla/mux"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
@@ -42,11 +43,11 @@ func setupRoutes(db *sql.DB) *mux.Router {
 	r.Use(corsMiddleware)
 
 	authHandler := handlers.NewAuthHandler(db, "my-secret-token")
-	apiHandler := handlers.NewApiHandler(db)
+	//apiHandler := handlers.NewApiHandler(db)
 
 	r.HandleFunc("/register", authHandler.RegisterHandler).Methods("POST")
 	r.HandleFunc("/login", authHandler.LoginHandler).Methods("POST", "OPTIONS")
-	r.HandleFunc("/api", apiHandler.RequestHandler).Methods("GET")
+	//r.HandleFunc("/api", apiHandler.RequestHandler).Methods("GET")
 
 	// ... other routes ...
 
@@ -68,6 +69,8 @@ func main() {
 	fmt.Println("Connected to the database!")
 
 	r := setupRoutes(db)
+
+	go routines.VerifyTraffic(db)
 
 	fmt.Println("starting the server on port 8080...")
 

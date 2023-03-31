@@ -10,20 +10,20 @@ import (
 
 var ErrNoLine = errors.New("no line found")
 
-type TrafficRepository interface {
+type LineRepository interface {
 	CreateLine(ctx context.Context, line *models.Line) (int64, error)
 	GetLineByLineID(ctx context.Context, id string) (*models.Line, error)
 }
 
-type postgresTrafficRepository struct {
+type postgresLineRepository struct {
 	db *sql.DB
 }
 
-func NewPostgresTrafficRepository(db *sql.DB) TrafficRepository {
-	return &postgresTrafficRepository{db: db}
+func NewPostgresLineRepository(db *sql.DB) LineRepository {
+	return &postgresLineRepository{db: db}
 }
 
-func (r *postgresTrafficRepository) CreateLine(ctx context.Context, line *models.Line) (int64, error) {
+func (r *postgresLineRepository) CreateLine(ctx context.Context, line *models.Line) (int64, error) {
 	query := `
 	INSERT INTO lines 
 	    (line_id, code, name, color, text_color, closing_time, opening_time) 
@@ -39,7 +39,7 @@ func (r *postgresTrafficRepository) CreateLine(ctx context.Context, line *models
 	return line.ID, nil
 }
 
-func (r *postgresTrafficRepository) GetLineByLineID(ctx context.Context, id string) (*models.Line, error) {
+func (r *postgresLineRepository) GetLineByLineID(ctx context.Context, id string) (*models.Line, error) {
 	query := "SELECT * FROM lines WHERE line_id = $1"
 	row := r.db.QueryRowContext(ctx, query, id)
 	line := &models.Line{}

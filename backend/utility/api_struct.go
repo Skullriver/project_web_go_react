@@ -1,5 +1,13 @@
 package utility
 
+type Link struct {
+	ID        string `json:"id"`
+	Internal  bool   `json:"internal"`
+	Rel       string `json:"rel"`
+	Templated bool   `json:"templated"`
+	Type      string `json:"type"`
+}
+
 type ApiResponse struct {
 	Pagination struct {
 		StartPage    int `json:"start_page"`
