@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/Skullriver/Sorbonne_PS3R.git/models"
+	"github.com/Skullriver/Sorbonne_PS3R.git/utility"
 )
 
 var ErrNoDisruption = errors.New("no disruption found")
@@ -13,7 +14,7 @@ var ErrNoDisruption = errors.New("no disruption found")
 type DisruptionRepository interface {
 	CreateDisruption(ctx context.Context, disruption *models.Disruption) (int64, error)
 	GetDisruptionByDisruptionID(ctx context.Context, id string) (*models.Disruption, error)
-	GetDisruptionsMap(ctx context.Context) (map[string]*models.Disruption, error)
+	GetDisruptionsMap(ctx context.Context) (map[string]*utility.Disruption, error)
 }
 
 type postgresDisruptionRepository struct {
@@ -59,9 +60,9 @@ func (r *postgresDisruptionRepository) GetDisruptionByDisruptionID(ctx context.C
 	return disruption, nil
 }
 
-func (r *postgresDisruptionRepository) GetDisruptionsMap(ctx context.Context) (map[string]*models.Disruption, error) {
+func (r *postgresDisruptionRepository) GetDisruptionsMap(ctx context.Context) (map[string]*utility.Disruption, error) {
 	query := `
-	SELECT d.* FROM disruptions d
+	SELECT d.*, l.created_at FROM disruptions d
 	INNER JOIN log l ON d.id = l.disruption_id;`
 
 	rows, err := r.db.QueryContext(ctx, query)
@@ -70,13 +71,14 @@ func (r *postgresDisruptionRepository) GetDisruptionsMap(ctx context.Context) (m
 	}
 	defer rows.Close()
 
-	disruptions := make(map[string]*models.Disruption)
+	disruptions := make(map[string]*utility.Disruption)
 	for rows.Next() {
-		disruption := &models.Disruption{}
+		disruption := &utility.Disruption{}
 		er := rows.Scan(&disruption.ID,
 			&disruption.DisruptionID, &disruption.LineID, &disruption.Status, &disruption.Type,
 			&disruption.Color, &disruption.Effect, &disruption.Title, &disruption.Message,
-			&disruption.UpdatedAt, &disruption.ApplicationStart, &disruption.ApplicationEnd)
+			&disruption.UpdatedAt, &disruption.ApplicationStart, &disruption.ApplicationEnd,
+			&disruption.CreatedAt)
 		if er != nil {
 			return nil, er
 		}

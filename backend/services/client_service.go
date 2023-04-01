@@ -54,6 +54,7 @@ func (s *ClientService) GetTraffic(ctx context.Context) utility.TrafficResponse 
 			disruptionObj.Color = disruption.Color
 			disruptionObj.Message = messageObj
 			disruptionObj.UpdatedAt = disruption.UpdatedAt.Format("02/01/2006 15:04:05")
+			disruptionObj.CreatedAt = disruption.CreatedAt.Format("02/01/2006 15:04:05")
 			disruptionObj.ApplicationStart = disruption.ApplicationStart.Format("02/01/2006 15:04:05")
 			disruptionObj.ApplicationEnd = disruption.ApplicationEnd.Format("02/01/2006 15:04:05")
 

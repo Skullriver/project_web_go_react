@@ -3,7 +3,6 @@ package routines
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"github.com/Skullriver/Sorbonne_PS3R.git/services"
 	"os"
 	"strconv"
@@ -12,7 +11,7 @@ import (
 
 func VerifyTraffic(db *sql.DB) {
 	for {
-		fmt.Println("executing goroutine to update traffic reports...")
+		//fmt.Println("executing goroutine to update traffic reports...")
 
 		timeString := os.Getenv("CONTEXT_TIME")
 		timeValue, err := strconv.Atoi(timeString)
@@ -31,8 +30,8 @@ func VerifyTraffic(db *sql.DB) {
 		apiService.UpdateTraffic(ctx, os.Getenv("API_REQUEST_METRO"))
 		apiService.UpdateTraffic(ctx, os.Getenv("API_REQUEST_RER"))
 
-		fmt.Println("traffic updated.")
+		//fmt.Println("traffic updated.")
 
-		time.Sleep(time.Minute)
+		time.Sleep(5 * time.Minute)
 	}
 }

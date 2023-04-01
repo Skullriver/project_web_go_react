@@ -1,5 +1,57 @@
 .accordion{
+    margin: 10px;
+}
+.main-container{
     margin: 100px;
+}
+
+.accordion-button{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+.accordion-title{
+    display: flex;
+    justify-content: space-between;
+    width: 85%;
+}
+.accordion-title-warnings{
+    color:#EF662F;
+}
+.accordion-title-warnings svg{
+    margin: -2px 5px;
+    vertical-align: baseline;
+}
+.accordion-title-text{
+    display: flex;
+    width: 85%;
+    justify-content: space-between;
+}
+.accordion-button:hover {
+    z-index: 0 !important;
+}
+
+.accordion-button:not(.collapsed){
+   color: #212529 !important;
+}
+
+.accordion-icons{
+    width: 10%;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.log-options{
+    display: flex;
+    justify-content: space-evenly;
+    width: 80vw;
+    margin: 0 auto;
+}
+
+button svg{
+    margin: -2px 10px -2px 0;
+    vertical-align: baseline;
 }
 
 .round-icon {

@@ -55,7 +55,7 @@ func (r *postgresLineRepository) GetLineByLineID(ctx context.Context, id string)
 }
 
 func (r *postgresLineRepository) GetLines(ctx context.Context) ([]*models.Line, error) {
-	query := "SELECT * FROM lines"
+	query := "SELECT * FROM lines ORDER BY line_id"
 	rows, err := r.db.QueryContext(ctx, query)
 
 	if err != nil {

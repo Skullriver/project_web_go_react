@@ -2,7 +2,7 @@ import {Component} from "react";
 import {BrowserRouter as Router, Link, Route, Routes} from "react-router-dom";
 
 import Login from "./auth/Login";
-import TrafficLog from "./traffic/TrafficLog";
+import TrafficPage from "./traffic/TrafficPage";
 
 class Menu extends Component {
     render() {
@@ -36,7 +36,7 @@ class Menu extends Component {
                             <Routes>
                                 <Route exact path="/" element={<Login/>}/>
                                 <Route path="/login" element={<Login/>}/>
-                                <Route path="/traffic" element={<TrafficLog/>}/>
+                                <Route path="/traffic" element={<TrafficPage/>}/>
                             </Routes>
                         </div>
                     </div>
