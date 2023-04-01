@@ -43,11 +43,11 @@ func setupRoutes(db *sql.DB) *mux.Router {
 	r.Use(corsMiddleware)
 
 	authHandler := handlers.NewAuthHandler(db, "my-secret-token")
-	//apiHandler := handlers.NewApiHandler(db)
+	clientHandler := handlers.NewClientHandler(db)
 
 	r.HandleFunc("/register", authHandler.RegisterHandler).Methods("POST")
 	r.HandleFunc("/login", authHandler.LoginHandler).Methods("POST", "OPTIONS")
-	//r.HandleFunc("/api", apiHandler.RequestHandler).Methods("GET")
+	r.HandleFunc("/api/traffic", clientHandler.TrafficHandler).Methods("GET")
 
 	// ... other routes ...
 

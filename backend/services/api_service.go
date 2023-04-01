@@ -16,12 +16,14 @@ import (
 type ApiService struct {
 	LineRepository       repository.LineRepository
 	DisruptionRepository repository.DisruptionRepository
+	LogRepository        repository.LogRepository
 }
 
 func NewApiService(db *sql.DB) *ApiService {
 	return &ApiService{
 		LineRepository:       repository.NewPostgresLineRepository(db),
 		DisruptionRepository: repository.NewPostgresDisruptionRepository(db),
+		LogRepository:        repository.NewPostgresLogRepository(db),
 	}
 }
 
@@ -205,8 +207,20 @@ func (s *ApiService) UpdateTraffic(ctx context.Context, url string) {
 						disruption.LineID = dbLine.LineID
 						_, e := s.DisruptionRepository.CreateDisruption(ctx, disruption)
 						if e != nil {
-							fmt.Println("Error creating line:", er)
+							fmt.Println("Error creating disruption:", er)
 							return
+						}
+						//If disruption was inserted
+						if disruption.ID != 0 {
+							dbLog := &models.Log{
+								DisruptionID: disruption.ID,
+								CreatedAt:    time.Now(),
+							}
+							_, e = s.LogRepository.Create(ctx, dbLog)
+							if e != nil {
+								fmt.Println("Error creating log:", er)
+								return
+							}
 						}
 					}
 				}

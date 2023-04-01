@@ -13,6 +13,7 @@ var ErrNoDisruption = errors.New("no disruption found")
 type DisruptionRepository interface {
 	CreateDisruption(ctx context.Context, disruption *models.Disruption) (int64, error)
 	GetDisruptionByDisruptionID(ctx context.Context, id string) (*models.Disruption, error)
+	GetDisruptionsMap(ctx context.Context) (map[string]*models.Disruption, error)
 }
 
 type postgresDisruptionRepository struct {
@@ -56,4 +57,31 @@ func (r *postgresDisruptionRepository) GetDisruptionByDisruptionID(ctx context.C
 		return nil, fmt.Errorf("failed to get disruption: %v", err)
 	}
 	return disruption, nil
+}
+
+func (r *postgresDisruptionRepository) GetDisruptionsMap(ctx context.Context) (map[string]*models.Disruption, error) {
+	query := `
+	SELECT d.* FROM disruptions d
+	INNER JOIN log l ON d.id = l.disruption_id;`
+
+	rows, err := r.db.QueryContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	disruptions := make(map[string]*models.Disruption)
+	for rows.Next() {
+		disruption := &models.Disruption{}
+		er := rows.Scan(&disruption.ID,
+			&disruption.DisruptionID, &disruption.LineID, &disruption.Status, &disruption.Type,
+			&disruption.Color, &disruption.Effect, &disruption.Title, &disruption.Message,
+			&disruption.UpdatedAt, &disruption.ApplicationStart, &disruption.ApplicationEnd)
+		if er != nil {
+			return nil, er
+		}
+		disruptions[disruption.LineID] = disruption
+	}
+
+	return disruptions, nil
 }

@@ -1,0 +1,23 @@
+.accordion{
+    margin: 100px;
+}
+
+.round-icon {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    margin: 0 10px 0 0;
+}
+
+.schedule{
+    margin: 0 10px;
+}
+
+.logo{
+    max-width: 40px;
+    max-height: 40px;
+}
