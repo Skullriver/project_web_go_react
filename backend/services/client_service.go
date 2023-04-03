@@ -28,7 +28,7 @@ func (s *ClientService) GetTraffic(ctx context.Context) utility.TrafficResponse 
 
 	for _, line := range lines {
 
-		disruption, exists := disruptions[line.LineID]
+		disruptionList, exists := disruptions[line.LineID]
 		var disruptionsObj []utility.Disruptions
 		lineObj := utility.Line{}
 
@@ -43,23 +43,23 @@ func (s *ClientService) GetTraffic(ctx context.Context) utility.TrafficResponse 
 		lineObj.Disruptions = disruptionsObj
 
 		if exists {
+			for _, disruption := range disruptionList {
+				messageObj := utility.Message{}
+				messageObj.Title = disruption.Title
+				messageObj.Description = disruption.Message
 
-			messageObj := utility.Message{}
-			messageObj.Title = disruption.Title
-			messageObj.Description = disruption.Message
+				disruptionObj := utility.Disruptions{}
+				disruptionObj.ID = disruption.DisruptionID
+				disruptionObj.Effect = disruption.Effect
+				disruptionObj.Color = disruption.Color
+				disruptionObj.Message = messageObj
+				disruptionObj.UpdatedAt = disruption.UpdatedAt.Format("02/01/2006 15:04:05")
+				disruptionObj.CreatedAt = disruption.CreatedAt.Format("02/01/2006 15:04:05")
+				disruptionObj.ApplicationStart = disruption.ApplicationStart.Format("02/01/2006 15:04:05")
+				disruptionObj.ApplicationEnd = disruption.ApplicationEnd.Format("02/01/2006 15:04:05")
 
-			disruptionObj := utility.Disruptions{}
-			disruptionObj.ID = disruption.DisruptionID
-			disruptionObj.Effect = disruption.Effect
-			disruptionObj.Color = disruption.Color
-			disruptionObj.Message = messageObj
-			disruptionObj.UpdatedAt = disruption.UpdatedAt.Format("02/01/2006 15:04:05")
-			disruptionObj.CreatedAt = disruption.CreatedAt.Format("02/01/2006 15:04:05")
-			disruptionObj.ApplicationStart = disruption.ApplicationStart.Format("02/01/2006 15:04:05")
-			disruptionObj.ApplicationEnd = disruption.ApplicationEnd.Format("02/01/2006 15:04:05")
-
-			disruptionsObj = append(disruptionsObj, disruptionObj)
-
+				disruptionsObj = append(disruptionsObj, disruptionObj)
+			}
 			lineObj.Disruptions = disruptionsObj
 
 		}

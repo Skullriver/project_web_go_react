@@ -108,7 +108,7 @@ func getDisruptionsMap(response utility.ApiResponse) map[string]*models.Disrupti
 		}
 
 		disruptionObj := &models.Disruption{
-			DisruptionID:     disruption.ID,
+			DisruptionID:     disruption.DisruptionID,
 			Status:           disruption.Status,
 			Type:             disruption.Cause,
 			Color:            disruption.Severity.Color,
