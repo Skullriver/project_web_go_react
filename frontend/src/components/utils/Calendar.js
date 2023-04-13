@@ -48,4 +48,4 @@ function CalendarApp(props) {
 
 }
 
-export default CalendarApp
+export default CalendarApp;

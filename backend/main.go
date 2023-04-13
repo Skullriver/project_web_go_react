@@ -45,7 +45,7 @@ func setupRoutes(db *sql.DB) *mux.Router {
 	authHandler := handlers.NewAuthHandler(db, "my-secret-token")
 	clientHandler := handlers.NewClientHandler(db)
 
-	r.HandleFunc("/register", authHandler.RegisterHandler).Methods("POST")
+	r.HandleFunc("/register", authHandler.RegisterHandler).Methods("POST", "OPTIONS")
 	r.HandleFunc("/login", authHandler.LoginHandler).Methods("POST", "OPTIONS")
 	r.HandleFunc("/api/traffic", clientHandler.TrafficHandler).Methods("GET")
 
