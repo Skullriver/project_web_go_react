@@ -8,7 +8,6 @@ import (
 	"github.com/Skullriver/Sorbonne_PS3R.git/repository"
 	"github.com/dgrijalva/jwt-go"
 	"golang.org/x/crypto/bcrypt"
-	"log"
 	"time"
 )
 
@@ -54,7 +53,6 @@ func (s *AuthService) RegisterUser(ctx context.Context, email, password, usernam
 
 func (s *AuthService) LoginUser(ctx context.Context, email, password string) (string, error) {
 	// Check if user with given email exists
-	log.Printf("UserRepository: %+v\n", s.UserRepository)
 	user, err := s.UserRepository.GetUserByEmail(ctx, email)
 	if err != nil {
 		return "", errors.New("invalid email or password")

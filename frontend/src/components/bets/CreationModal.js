@@ -8,6 +8,7 @@ import axios from "axios";
 import withAuth from "../auth/CheckAuth";
 
 let endpointGet = "http://localhost:8080/api/betCreationInfo"
+let endpointPost = "http://localhost:8080/api/createBet"
 
 function CreationModal(args) {
 
@@ -38,7 +39,8 @@ function CreationModal(args) {
         limitDate: initialLimitDate,
         qtDefeat: '',
         qtVictory: '',
-        select: '',
+        m_r: '',
+        num_type: '',
         selectLine: '',
         value: '',
     });
@@ -66,17 +68,17 @@ function CreationModal(args) {
 
         if (name === 'type') {
             switch (value) {
-                case 'type1':
+                case '1':
                     setType1Visible(true);
                     setType2Visible(false);
                     setType3Visible(false);
                     break;
-                case 'type2':
+                case '2':
                     setType1Visible(false);
                     setType2Visible(true);
                     setType3Visible(false);
                     break;
-                case 'type3':
+                case '3':
                     setType1Visible(false);
                     setType2Visible(false);
                     setType3Visible(true);
@@ -93,7 +95,7 @@ function CreationModal(args) {
     const handleDateChange = (name, date) => {
         setFormData({
             ...formData,
-            [name]: date
+            [name]: new Date(date)
         });
         if (name === "startDay") {
             let limitDate;
@@ -105,8 +107,8 @@ function CreationModal(args) {
 
             setFormData({
                 ...formData,
-                [name]: date,
-                ['limitDate']: limitDate
+                [name]: new Date(date),
+                ['limitDate']: new Date(limitDate)
             });
         }
 
@@ -115,7 +117,18 @@ function CreationModal(args) {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        console.log(formData);
+        const authToken = localStorage.getItem('token');
+        axios.post(endpointPost, formData, {
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            },
+        })
+            .then(response => {
+                console.log('Post created:', response.data);
+            })
+            .catch(error => {
+                console.log(error);
+            });
     };
 
     return (
@@ -150,9 +163,9 @@ function CreationModal(args) {
                                         required
                                     >
                                         <option value="">Sélectionnez le type</option>
-                                        <option value="type1">Proportion de lignes où il y aura un problème</option>
-                                        <option value="type2">La présence de problèmes sur une ligne</option>
-                                        <option value="type3">Le nombre total d'incidents pour cette journée</option>
+                                        <option value="1">Proportion de lignes où il y aura un problème</option>
+                                        <option value="2">La présence de problèmes sur une ligne</option>
+                                        <option value="3">Le nombre total d'incidents pour cette journée</option>
                                     </Input>
                                 </FormGroup>
                                 <FormGroup>
@@ -206,9 +219,9 @@ function CreationModal(args) {
                                             <Label for="select">RER/Métro ?</Label>
                                             <Input
                                                 type="select"
-                                                name="select"
+                                                name="m_r"
                                                 id="select"
-                                                value={formData.select}
+                                                value={formData.m_r}
                                                 onChange={handleInputChange}
                                                 required
                                             >
@@ -221,9 +234,9 @@ function CreationModal(args) {
                                             <Label for="selectQty">%/qté ?</Label>
                                             <Input
                                                 type="select"
-                                                name="selectQty"
+                                                name="num_type"
                                                 id="selectQty"
-                                                value={formData.selectQty}
+                                                value={formData.num_type}
                                                 onChange={handleInputChange}
                                                 required
                                             >
@@ -254,9 +267,9 @@ function CreationModal(args) {
                                             <Label for="select">RER/Métro</Label>
                                             <Input
                                                 type="select"
-                                                name="select"
+                                                name="m_r"
                                                 id="select"
-                                                value={formData.select}
+                                                value={formData.m_r}
                                                 onChange={handleInputChange}
                                                 required
                                             >
@@ -276,13 +289,13 @@ function CreationModal(args) {
                                                 required
                                             >
                                                 <option value="">Sélectionnez...</option>
-                                                {formData.select === "RER" &&
+                                                {formData.m_r === "RER" &&
                                                     data.RER.map((line) => (
                                                         <option key={line.name} value={line.name}>
                                                             Line {line.name}
                                                         </option>
                                                     ))}
-                                                {formData.select === "Metro" &&
+                                                {formData.m_r === "Metro" &&
                                                     data.Metro.map((line) => (
                                                         <option key={line.name} value={line.name}>
                                                             Line {line.name}
@@ -300,9 +313,9 @@ function CreationModal(args) {
                                         <Label for="select">RER/Métro ?</Label>
                                         <Input
                                             type="select"
-                                            name="select"
+                                            name="m_r"
                                             id="select"
-                                            value={formData.select}
+                                            value={formData.m_r}
                                             onChange={handleInputChange}
                                             required
                                         >
