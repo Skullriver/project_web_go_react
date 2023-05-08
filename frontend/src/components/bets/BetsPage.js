@@ -4,6 +4,15 @@ import axios from "axios";
 import {Button, Col, Container, Row} from "reactstrap";
 import {RxUpdate} from "react-icons/rx";
 import CreationModal from "./CreationModal";
+import withAuth from "../auth/CheckAuth";
+import {useNavigate} from "react-router-dom";
+
+const withNavigate = (Component) => {
+    return function WrappedComponent(props) {
+        const navigate = useNavigate();
+        return <Component navigate={navigate} {...props} />;
+    }
+};
 
 class BetsPage extends Component {
 
@@ -23,6 +32,11 @@ class BetsPage extends Component {
 
     };
 
+    handleExit = () => {
+        localStorage.removeItem('token');
+        this.props.navigate('/login');
+    };
+
     render() {
         return (
             <div className="main-container">
@@ -32,6 +46,7 @@ class BetsPage extends Component {
                             <div>
                                 <CreationModal/>
                             </div>
+                            <button onClick={this.handleExit}>Exit</button>
                         </Col>
                     </Row>
                 </Container>
@@ -40,4 +55,4 @@ class BetsPage extends Component {
     }
 }
 
-export default BetsPage;
+export default withAuth(withNavigate(BetsPage));

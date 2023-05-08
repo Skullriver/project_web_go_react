@@ -6,6 +6,7 @@ import TrafficList from "./TrafficList";
 import {Button, Col, Container, Row} from "reactstrap";
 import CalendarApp from "../utils/Calendar";
 import {RxUpdate} from "react-icons/rx";
+import withAuth from "../auth/CheckAuth";
 
 let endpoint = "http://localhost:8080/api/traffic"
 
@@ -83,4 +84,4 @@ class TrafficPage extends Component {
     }
 }
 
-export default TrafficPage;
+export default withAuth(TrafficPage);

@@ -1,8 +1,17 @@
 import React, {Component} from "react";
 import axios from 'axios';
 import '../../styles/auth.css';
+import {useNavigate} from "react-router-dom";
+import {Alert, UncontrolledAlert} from "reactstrap";
 
 let endpoint = "http://localhost:8080/user/register"
+
+const withNavigate = (Component) => {
+    return function WrappedComponent(props) {
+        const navigate = useNavigate();
+        return <Component navigate={navigate} {...props} />;
+    }
+};
 
 class Register extends Component {
 
@@ -11,7 +20,9 @@ class Register extends Component {
         this.state = {
             username: "",
             email: "",
-            password: ""
+            password: "",
+            message: "",
+            messageOpen: false
         };
     }
 
@@ -38,12 +49,17 @@ class Register extends Component {
 
         axios.post(endpoint, user)
             .then(response => {
-                console.log(response.data);
+                localStorage.setItem('token', response.data.token);
+                this.props.navigate('/');
             })
             .catch(error => {
-                console.log(error);
+                this.setState({message:error.response.data})
+                this.setState({messageOpen: true})
             });
     };
+
+
+    onDismiss = () => this.setState({messageOpen: false});
 
     render() {
         return (
@@ -81,7 +97,9 @@ class Register extends Component {
                                 onChange={this.handlePasswordChange}
                             />
                         </div>
-
+                        <Alert color="danger" isOpen={this.state.messageOpen} toggle={this.onDismiss}>
+                            {this.state.message}
+                        </Alert>
                         <div className="d-grid">
                             <button type="submit" className="btn btn-primary">
                                 Submit
@@ -97,4 +115,4 @@ class Register extends Component {
 }
 
 
-export default Register;
+export default withNavigate(Register);

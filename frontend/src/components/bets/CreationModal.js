@@ -5,6 +5,7 @@ import DatePicker from "react-datepicker";
 import {fr} from "date-fns/locale";
 import {isSameDay} from "date-fns";
 import axios from "axios";
+import withAuth from "../auth/CheckAuth";
 
 let endpointGet = "http://localhost:8080/api/betCreationInfo"
 

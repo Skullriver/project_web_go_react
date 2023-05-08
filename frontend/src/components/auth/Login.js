@@ -1,8 +1,16 @@
 import React, {Component} from "react";
 import axios from 'axios';
 import '../../styles/auth.css';
+import {useNavigate} from "react-router-dom";
 
 let endpoint = "http://localhost:8080/user/login"
+
+const withNavigate = (Component) => {
+    return function WrappedComponent(props) {
+        const navigate = useNavigate();
+        return <Component navigate={navigate} {...props} />;
+    }
+};
 
 class Login extends Component {
 
@@ -13,6 +21,7 @@ class Login extends Component {
             password: ""
         };
     }
+
 
     handleEmailChange = event => {
         this.setState({email: event.target.value});
@@ -30,9 +39,11 @@ class Login extends Component {
             password: this.state.password
         };
 
+
         axios.post(endpoint, user)
             .then(response => {
-                console.log(response.data);
+                localStorage.setItem('token', response.data.token);
+                this.props.navigate('/');
             })
             .catch(error => {
                 console.log(error);
@@ -94,4 +105,4 @@ class Login extends Component {
 }
 
 
-export default Login;
+export default withNavigate(Login);

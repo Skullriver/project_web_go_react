@@ -81,6 +81,16 @@ func (s *AuthService) VerifyToken(ctx context.Context, tokenString string) (int6
 		return 0, err
 	}
 
+	// Check if the token is expired
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		expirationTime := time.Unix(int64(claims["exp"].(float64)), 0)
+		if time.Now().UTC().After(expirationTime) {
+			return 0, errors.New("token is expired")
+		}
+	} else {
+		return 0, errors.New("invalid token claims")
+	}
+
 	// Extract the user ID from the token
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if !ok {

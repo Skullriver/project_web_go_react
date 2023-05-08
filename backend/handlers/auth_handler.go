@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"encoding/json"
-	"fmt"
 	"github.com/Skullriver/Sorbonne_PS3R.git/repository"
 	"github.com/Skullriver/Sorbonne_PS3R.git/services"
 	"net/http"
@@ -46,7 +45,6 @@ func NewAuthHandler(db *sql.DB, tokenSecret string) *AuthHandler {
 
 func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Content-Security-Policy", "default-src 'self'")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
@@ -74,7 +72,6 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusUnauthorized)
 		return
 	}
-	fmt.Println(token)
 
 	// Create a LoginResponse with the JWT token
 	resp := LoginResponse{Token: token}
@@ -83,7 +80,6 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
 func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 
-	w.Header().Set("Content-Security-Policy", "default-src 'self'")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
