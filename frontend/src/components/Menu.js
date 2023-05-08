@@ -4,6 +4,7 @@ import {BrowserRouter as Router, Link, Route, Routes} from "react-router-dom";
 import Login from "./auth/Login";
 import TrafficPage from "./traffic/TrafficPage";
 import BetsPage from "./bets/BetsPage";
+import Register from "./auth/Register";
 
 class Menu extends Component {
     render() {
@@ -24,6 +25,11 @@ class Menu extends Component {
                                         </Link>
                                     </li>
                                     <li className="nav-item">
+                                        <Link className="nav-link" to={'/register'}>
+                                            Register
+                                        </Link>
+                                    </li>
+                                    <li className="nav-item">
                                         <Link className="nav-link" to={'/traffic'}>
                                             Traffic status
                                         </Link>
@@ -37,6 +43,7 @@ class Menu extends Component {
                             <Routes>
                                 <Route exact path="/" element={<BetsPage/>}/>
                                 <Route path="/login" element={<Login/>}/>
+                                <Route path="/register" element={<Register/>}/>
                                 <Route path="/traffic" element={<TrafficPage/>}/>
                             </Routes>
                         </div>

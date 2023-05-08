@@ -28,6 +28,7 @@ type LoginResponse struct {
 
 type RegisterResponse struct {
 	Message string `json:"message"`
+	Token   string `json:"token"`
 }
 
 type AuthHandler struct {
@@ -45,6 +46,7 @@ func NewAuthHandler(db *sql.DB, tokenSecret string) *AuthHandler {
 
 func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("Content-Security-Policy", "default-src 'self'")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Access-Control-Allow-Methods", "POST")
 	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
@@ -75,11 +77,23 @@ func (h *AuthHandler) LoginHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(token)
 
 	// Create a LoginResponse with the JWT token
-	resp := LoginResponse{Token: "test"}
+	resp := LoginResponse{Token: token}
 	json.NewEncoder(w).Encode(resp)
 }
 
 func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Security-Policy", "default-src 'self'")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "POST")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	// Check request method
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	var req RegisterRequest
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
@@ -92,13 +106,13 @@ func (h *AuthHandler) RegisterHandler(w http.ResponseWriter, r *http.Request) {
 	defer cancel()
 
 	// Call the RegisterUser function from the AuthService
-	err = h.auth.RegisterUser(ctx, req.Email, req.Password, req.Username)
+	token, err := h.auth.RegisterUser(ctx, req.Email, req.Password, req.Username)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	// Create a RegisterResponse with a success message
-	resp := RegisterResponse{Message: "User registration successful"}
+	resp := RegisterResponse{Message: "User registration successful", Token: token}
 	json.NewEncoder(w).Encode(resp)
 }

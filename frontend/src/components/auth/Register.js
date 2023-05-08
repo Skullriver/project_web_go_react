@@ -2,17 +2,22 @@ import React, {Component} from "react";
 import axios from 'axios';
 import '../../styles/auth.css';
 
-let endpoint = "http://localhost:8080/user/login"
+let endpoint = "http://localhost:8080/user/register"
 
-class Login extends Component {
+class Register extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            username: "",
             email: "",
             password: ""
         };
     }
+
+    handleUsernameChange = event => {
+        this.setState({username: event.target.value});
+    };
 
     handleEmailChange = event => {
         this.setState({email: event.target.value});
@@ -26,6 +31,7 @@ class Login extends Component {
         event.preventDefault();
 
         const user = {
+            username: this.state.username,
             email: this.state.email,
             password: this.state.password
         };
@@ -44,7 +50,17 @@ class Login extends Component {
             <div className="auth-wrapper">
                 <div className="auth-inner">
                     <form onSubmit={this.handleSubmit}>
-                        <h3>Sign In</h3>
+                        <h3>Sign Up</h3>
+                        <div className="mb-3">
+                            <label>Username</label>
+                            <input
+                                type="text"
+                                className="form-control"
+                                placeholder="Enter username"
+                                value={this.state.username}
+                                onChange={this.handleUsernameChange}
+                            />
+                        </div>
                         <div className="mb-3">
                             <label>Email address</label>
                             <input
@@ -65,26 +81,13 @@ class Login extends Component {
                                 onChange={this.handlePasswordChange}
                             />
                         </div>
-                        <div className="mb-3">
-                            <div className="custom-control custom-checkbox">
-                                <input
-                                    type="checkbox"
-                                    className="custom-control-input"
-                                    id="customCheck1"
-                                />
-                                <label className="custom-control-label" htmlFor="customCheck1">
-                                    Remember me
-                                </label>
-                            </div>
-                        </div>
+
                         <div className="d-grid">
                             <button type="submit" className="btn btn-primary">
                                 Submit
                             </button>
                         </div>
-                        <p className="forgot-password text-right">
-                            Forgot <a href="#">password?</a>
-                        </p>
+
                     </form>
                 </div>
             </div>
@@ -94,4 +97,4 @@ class Login extends Component {
 }
 
 
-export default Login;
+export default Register;
