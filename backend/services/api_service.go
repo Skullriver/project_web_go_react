@@ -77,6 +77,10 @@ func getDisruptionsMap(response utility.ApiResponse) map[string]*models.Disrupti
 			continue
 		}
 
+		if disruption.Status == "future" {
+			continue
+		}
+
 		title := ""
 		text := ""
 		for _, message := range disruption.Messages {

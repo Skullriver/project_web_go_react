@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Link, Route, Routes} from "react-router-dom";
 
 import Login from "./auth/Login";
 import TrafficPage from "./traffic/TrafficPage";
+import BetsPage from "./bets/BetsPage";
 
 class Menu extends Component {
     render() {
@@ -34,7 +35,7 @@ class Menu extends Component {
                     <div>
                         <div>
                             <Routes>
-                                <Route exact path="/" element={<Login/>}/>
+                                <Route exact path="/" element={<BetsPage/>}/>
                                 <Route path="/login" element={<Login/>}/>
                                 <Route path="/traffic" element={<TrafficPage/>}/>
                             </Routes>

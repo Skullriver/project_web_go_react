@@ -12,21 +12,21 @@ import (
 	"time"
 )
 
-type ClientHandler struct {
-	api *services.ClientService
+type TrafficHandler struct {
+	api *services.TrafficService
 }
 
-func NewClientHandler(db *sql.DB) *ClientHandler {
-	api := &services.ClientService{
+func NewTrafficHandler(db *sql.DB) *TrafficHandler {
+	api := &services.TrafficService{
 		UserRepository:       repository.NewPostgresUserRepository(db),
 		LineRepository:       repository.NewPostgresLineRepository(db),
 		DisruptionRepository: repository.NewPostgresDisruptionRepository(db),
 		LogRepository:        repository.NewPostgresLogRepository(db),
 	}
-	return &ClientHandler{api: api}
+	return &TrafficHandler{api: api}
 }
 
-func (h *ClientHandler) TrafficHandler(w http.ResponseWriter, r *http.Request) {
+func (h *TrafficHandler) TrafficHandler(w http.ResponseWriter, r *http.Request) {
 
 	// Create a new context with a timeout of 5 seconds
 	timeString := os.Getenv("CONTEXT_TIME")
@@ -41,7 +41,6 @@ func (h *ClientHandler) TrafficHandler(w http.ResponseWriter, r *http.Request) {
 	ctx, cancel := context.WithTimeout(context.Background(), contextTime)
 	defer cancel()
 
-	// Call the LoginUser function from the AuthService
 	response := h.api.GetTraffic(ctx)
 	// Print the response body
 	err = json.NewEncoder(w).Encode(response)

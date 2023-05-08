@@ -1,0 +1,73 @@
+.form-title .modal-title{
+    width: 90%;
+}
+
+.form-block-1, .form-block-2, .form-type1-line{
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
+
+.form-block-line-1, .form-type3-block{
+    display: flex;
+    width: 66%;
+}
+.form-block-1 > div:last-child{
+    width: 33%;
+}
+.form-block-line-1 > div, .form-type1-line > div{
+    width: 100%;
+    padding-right: 10px;
+}
+
+.form-block-2 .form-type1-block, .form-block-2 .form-type2-block{
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    width: 66%;
+}
+.form-block-2 .form-qt-block{
+    width: 33%;
+}
+
+.form-type1-block > div:last-child{
+    padding-right: 10px;
+    width: 50%;
+}
+.form-type2-block > div{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+.form-type2-block > div > div, .form-type3-block > div{
+    width: 100%;
+    padding-right: 10px;
+}
+
+@media screen and (max-width:996px) {
+    .form-block-1, .form-block-2, .form-type1-line{
+        flex-direction: column;
+    }
+    .form-block-line-1, .form-type3-block{
+        flex-direction: column;
+    }
+    .form-type2-block > div{
+        flex-direction: column;
+    }
+}
+@media screen and (max-width:576px) {
+    .form-block-line-1, .form-type3-block{
+        width: 100%;
+    }
+    .form-block-1 > div:last-child{
+        width: 100%;
+        padding-right: 10px;
+    }
+    .form-block-2 .form-type1-block, .form-block-2 .form-type2-block{
+        width: 100%;
+    }
+    .form-block-2 .form-qt-block{
+        width: 100%;
+        padding-right: 10px;
+    }
+}

@@ -6,14 +6,14 @@ import (
 	"github.com/Skullriver/Sorbonne_PS3R.git/utility"
 )
 
-type ClientService struct {
+type TrafficService struct {
 	UserRepository       repository.UserRepository
 	LineRepository       repository.LineRepository
 	DisruptionRepository repository.DisruptionRepository
 	LogRepository        repository.LogRepository
 }
 
-func (s *ClientService) GetTraffic(ctx context.Context) utility.TrafficResponse {
+func (s *TrafficService) GetTraffic(ctx context.Context) utility.TrafficResponse {
 
 	lines, err := s.LineRepository.GetLines(ctx)
 	if err != nil {
