@@ -8,6 +8,7 @@ type BetCreationInfoResponse struct {
 }
 type SimpleLine struct {
 	Name        string    `json:"name"`
+	LineID      string    `json:"line_id"`
 	ClosingTime time.Time `json:"closing_time"`
 	OpeningTime time.Time `json:"opening_time"`
 }

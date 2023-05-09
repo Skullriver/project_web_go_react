@@ -114,7 +114,7 @@ func (r *postgresBetRepository) UpdateBet(ctx context.Context, bet *models.Bet) 
 }
 
 func (r *postgresBetRepository) DeleteBet(ctx context.Context, id int) error {
-	_, err := r.db.ExecContext(ctx, "DELETE FROM bet WHERE id = $1", id)
+	_, err := r.db.ExecContext(ctx, "DELETE FROM bets WHERE id = $1", id)
 	if err != nil {
 		return err
 	}

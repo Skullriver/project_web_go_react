@@ -5,12 +5,18 @@ import jwt_decode from 'jwt-decode';
 const withAuth = (Component) => {
     const AuthenticatedComponent = (props) => {
         const navigate = useNavigate();
+
         useEffect(() => {
-            // Get token from localStorage
             const token = localStorage.getItem('token');
-            if (!token || jwt_decode(token).exp < Date.now() / 1000) {
-                // Redirect user to login page if no token is found
-                navigate('/login');
+
+            try {
+                const decodedToken = jwt_decode(token);
+                if (!token || decodedToken.exp < Date.now() / 1000) {
+                    // Redirect user to login page if no token is found
+                    navigate('/login');
+                }
+            } catch (error) {
+                navigate('/login', { state: { error: 'Your session has expired. Please log in again.' } });
             }
         }, [navigate]);
 

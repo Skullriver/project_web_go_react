@@ -33,6 +33,7 @@ func (s *BetService) GetInfoForCreation(ctx context.Context) utility.BetCreation
 		lineObj := utility.SimpleLine{}
 
 		lineObj.Name = line.Code
+		lineObj.LineID = line.LineID
 		lineObj.ClosingTime = line.ClosingTime
 		lineObj.OpeningTime = line.OpeningTime
 
@@ -102,25 +103,25 @@ func (s *BetService) CreateBet(ctx context.Context, req utility.CreateBetRequest
 		return 0, errors.New("bet creation failed: " + err.Error())
 	}
 
-	var NumTypeInt int
-	if req.NumType == "%" {
-		NumTypeInt = 1
-	} else if req.NumType == "qty" {
-		NumTypeInt = 2
-	} else {
-		return 0, errors.New("bet creation failed: invalid NumType")
-	}
-
-	ValueFloat, err := strconv.ParseFloat(req.Value, 64)
-	if err != nil {
-		return 0, errors.New("bet creation failed: invalid QtVictory")
-	}
-
 	var betType repository.BetType
 
 	switch typeInt {
 	case 1:
 		// Handle BetType1
+		var NumTypeInt int
+		if req.NumType == "%" {
+			NumTypeInt = 1
+		} else if req.NumType == "qty" {
+			NumTypeInt = 2
+		} else {
+			s.BetRepository.DeleteBet(ctx, betID)
+			return 0, errors.New("bet creation failed: invalid NumType")
+		}
+		ValueFloat, err := strconv.ParseFloat(req.Value, 64)
+		if err != nil {
+			s.BetRepository.DeleteBet(ctx, betID)
+			return 0, errors.New("bet creation failed: invalid QtVictory")
+		}
 		betType = &repository.BetType1{
 			ID:      betID,
 			MR:      req.MR,
@@ -136,16 +137,24 @@ func (s *BetService) CreateBet(ctx context.Context, req utility.CreateBetRequest
 		}
 	case 3:
 		// Handle BetType3
+		ValueFloat, err := strconv.ParseFloat(req.Value, 64)
+		if err != nil {
+			s.BetRepository.DeleteBet(ctx, betID)
+			return 0, errors.New("bet creation failed: invalid QtVictory")
+		}
 		betType = &repository.BetType3{
 			ID:    betID,
 			MR:    req.MR,
 			Value: ValueFloat,
 		}
 	default:
+		s.BetRepository.DeleteBet(ctx, betID)
 		return 0, errors.New("unsupported bet type")
 	}
 
 	err = s.BetRepository.FillTypeBet(ctx, betType)
+
+	s.BetRepository.DeleteBet(ctx, 5)
 
 	if err != nil {
 		s.BetRepository.DeleteBet(ctx, betID)

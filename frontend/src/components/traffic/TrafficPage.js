@@ -30,11 +30,14 @@ class TrafficPage extends Component {
         this.setState({
             linesList: [],
         });
+        const authToken = localStorage.getItem('token');
         const params = {
             dateStart: this.state.currentStartDate,
             dateEnd: this.state.currentEndDate
         };
-        axios.get(endpoint, {params}).then(
+        axios.get(endpoint, {params, headers: {
+                Authorization: `Bearer ${authToken}`,
+            }}).then(
             res => this.setState({
                 linesList: res.data,
             })

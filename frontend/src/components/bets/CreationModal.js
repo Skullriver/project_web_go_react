@@ -1,27 +1,34 @@
 import React, {useEffect, useState} from 'react';
-import {Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader, Tooltip} from 'reactstrap';
+import {Alert, Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
 import '../../styles/createBet.css';
 import DatePicker from "react-datepicker";
 import {fr} from "date-fns/locale";
 import {isSameDay} from "date-fns";
 import axios from "axios";
-import withAuth from "../auth/CheckAuth";
 
 let endpointGet = "http://localhost:8080/api/betCreationInfo"
 let endpointPost = "http://localhost:8080/api/createBet"
 
 function CreationModal(args) {
 
-    const [data, setData] = useState([]);
+    const [data, setData] = useState({RER:[], Metro:[]});
 
-    useEffect(() => {
-        axios.get(endpointGet)
-            .then(response => setData(response.data))
-            .catch(error => console.error(error));
-    }, []);
-
+    const authToken = localStorage.getItem('token');
 
     const [modal, setModal] = useState(false);
+
+    useEffect(() => {
+        axios.get(endpointGet, {
+            headers: {
+                Authorization: `Bearer ${authToken}`,
+            },
+        })
+            .then(response => setData(response.data))
+            .catch(error => {
+                setAlertMessage(error.response.data)
+                setAlert(true)
+            });
+    }, []);
 
     const limitDateTomorrow = new Date();
     limitDateTomorrow.setDate(limitDateTomorrow.getDate() + 1);
@@ -56,6 +63,14 @@ function CreationModal(args) {
     }
 
     const toggle = () => setModal(!modal);
+
+    const [responseModal, setResponseModal] = useState(false);
+    const [messageModal, setMessageModal] = useState('');
+    const toggleResponseModal = () => setResponseModal(!responseModal);
+
+    const [alert, setAlert] = useState(false);
+    const [alertMessage, setAlertMessage] = useState('');
+    const onDismiss = () => setAlert(!alert);
 
     const [type1Visible, setType1Visible] = useState(false);
     const [type2Visible, setType2Visible] = useState(false);
@@ -124,12 +139,30 @@ function CreationModal(args) {
             },
         })
             .then(response => {
-                console.log('Post created:', response.data);
+                setModal(false);
+                setFormData({
+                    title: '',
+                    type: '',
+                    startDay: initialStartDay,
+                    limitDate: initialLimitDate,
+                    qtDefeat: '',
+                    qtVictory: '',
+                    m_r: '',
+                    num_type: '',
+                    selectLine: '',
+                    value: '',
+                });
+                setMessageModal(response.data.Message)
+                setResponseModal(true);
             })
             .catch(error => {
-                console.log(error);
+                setAlertMessage(error.response.data)
+                setAlert(true)
             });
     };
+
+
+
 
     return (
         <div>
@@ -291,13 +324,13 @@ function CreationModal(args) {
                                                 <option value="">Sélectionnez...</option>
                                                 {formData.m_r === "RER" &&
                                                     data.RER.map((line) => (
-                                                        <option key={line.name} value={line.name}>
+                                                        <option key={line.name} value={line.line_id}>
                                                             Line {line.name}
                                                         </option>
                                                     ))}
                                                 {formData.m_r === "Metro" &&
                                                     data.Metro.map((line) => (
-                                                        <option key={line.name} value={line.name}>
+                                                        <option key={line.name} value={line.line_id}>
                                                             Line {line.name}
                                                         </option>
                                                     ))}
@@ -344,6 +377,7 @@ function CreationModal(args) {
                                     <Label for="qtDefeat">Taux de défaite</Label>
                                     <Input
                                         type="number"
+                                        step="0.1"
                                         min="0.1"
                                         name="qtDefeat"
                                         id="qtDefeat"
@@ -356,6 +390,7 @@ function CreationModal(args) {
                                     <Label for="qtVictory">Taux de réussite</Label>
                                     <Input
                                         type="number"
+                                        step="0.1"
                                         min="0.1"
                                         name="qtVictory"
                                         id="qtVictory"
@@ -369,6 +404,9 @@ function CreationModal(args) {
                         </div>
 
                     </ModalBody>
+                    <Alert color="danger" isOpen={alert} toggle={onDismiss}>
+                        {alertMessage}
+                    </Alert>
                     <ModalFooter>
                         <Button type="submit" color="primary">Créer</Button>
                         {/*<Button color="primary" onClick={toggle}>*/}
@@ -380,6 +418,16 @@ function CreationModal(args) {
                     </ModalFooter>
                 </Form>
             </Modal>
+            <Modal isOpen={responseModal} toggle={toggleResponseModal} backdrop="static" size="sm" {...args}>
+                <ModalHeader toggle={toggleResponseModal} className="form-title">
+                    Confirmation
+                </ModalHeader>
+                <ModalBody>
+                    {messageModal}
+                    You can see your tickets here -> { /*TODO add page for tickets*/ }
+                </ModalBody>
+            </Modal>
+
         </div>
     );
 }

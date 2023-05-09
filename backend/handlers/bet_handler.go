@@ -38,6 +38,16 @@ func NewBetHandler(db *sql.DB, secretToken string) *BetHandler {
 
 func (h *BetHandler) InfoBetHandler(w http.ResponseWriter, r *http.Request) {
 
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+	// Check request method
+	if r.Method == "OPTIONS" {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
 	// Create a new context with a timeout of 5 seconds
 	timeString := os.Getenv("CONTEXT_TIME")
 	timeValue, err := strconv.Atoi(timeString)
@@ -50,6 +60,22 @@ func (h *BetHandler) InfoBetHandler(w http.ResponseWriter, r *http.Request) {
 	contextTime := time.Duration(timeValue) * time.Second
 	ctx, cancel := context.WithTimeout(context.Background(), contextTime)
 	defer cancel()
+
+	// Get token from Authorization header
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		// Return an error response if no Authorization header is found
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	// Parse token from Authorization header
+	tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
+	_, err = h.auth.VerifyToken(ctx, tokenString)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
 
 	// Call the
 	response := h.api.GetInfoForCreation(ctx)
