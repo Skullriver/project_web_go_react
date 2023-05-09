@@ -36,7 +36,7 @@ func (s *AuthService) RegisterUser(ctx context.Context, email, password, usernam
 	}
 
 	// Create a new user with the given email, hashed password, and username
-	user = &models.User{Email: email, Password: string(hashedPassword), Username: username}
+	user = &models.User{Email: email, Password: string(hashedPassword), Username: username, AccountBalance: 3000}
 	err = s.UserRepository.CreateUser(ctx, user)
 	if err != nil {
 		return "", err

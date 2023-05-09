@@ -89,6 +89,7 @@ func (s *BetService) CreateBet(ctx context.Context, req utility.CreateBetRequest
 	// Create a new bet object
 	bet := &models.Bet{
 		Type:      typeInt,
+		Title:     req.Title,
 		DateBet:   st,
 		LimitDate: lt,
 		QtVictory: QtVictoryFloat,
@@ -162,4 +163,24 @@ func (s *BetService) CreateBet(ctx context.Context, req utility.CreateBetRequest
 	}
 
 	return betID, nil
+}
+
+func (s *BetService) GetActiveBets(ctx context.Context) ([]utility.ActiveBet, error) {
+
+	bets, err := s.BetRepository.GetActiveBets(ctx)
+	if err != nil {
+		return nil, nil
+	}
+
+	return bets, nil
+}
+
+func (s *BetService) GetBetByID(ctx context.Context, betID int) (utility.SelectedBet, error) {
+
+	bet, err := s.BetRepository.GetBetByID(ctx, betID)
+	if err != nil {
+		return utility.SelectedBet{}, nil
+	}
+
+	return bet, nil
 }

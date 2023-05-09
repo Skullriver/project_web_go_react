@@ -6,6 +6,7 @@ import (
 
 type Bet struct {
 	ID        int       `db:"id"`
+	Title     string    `db:"title"`
 	Type      int       `db:"type"`
 	DateBet   time.Time `db:"date_bet"`
 	LimitDate time.Time `db:"limit_date"`

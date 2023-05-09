@@ -37,7 +37,8 @@ class TrafficPage extends Component {
         };
         axios.get(endpoint, {params, headers: {
                 Authorization: `Bearer ${authToken}`,
-            }}).then(
+            }})
+            .then(
             res => this.setState({
                 linesList: res.data,
             })

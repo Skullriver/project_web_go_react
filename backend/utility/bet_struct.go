@@ -29,3 +29,30 @@ type BetCreationResponse struct {
 	BetID   int    `json:"betID"`
 	Message string `json:"Message"`
 }
+
+type ActiveBet struct {
+	ID        int       `json:"id"`
+	Type      int       `json:"type"`
+	LimitDate time.Time `json:"limit_date"`
+	QtVictory float64   `json:"qt_victory"`
+	QtLoss    float64   `json:"qt_loss"`
+	Status    string    `json:"status"`
+	UserID    int64     `json:"user_id"`
+	Username  string    `json:"username"`
+}
+
+type SelectedBet struct {
+	ID              int       `json:"id"`
+	Title           string    `json:"title"`
+	Type            int       `json:"type"`
+	MR              string    `json:"m_r"`
+	Line            string    `json:"line"`
+	NumType         int       `json:"num_type"`
+	Value           float64   `json:"value"`
+	LimitDate       time.Time `json:"limit_date"`
+	QtVictory       float64   `json:"qt_victory"`
+	QtLoss          float64   `json:"qt_loss"`
+	Status          string    `json:"status"`
+	CreatorID       string    `json:"creator_id"`
+	CreatorUsername string    `json:"creator_username"`
+}

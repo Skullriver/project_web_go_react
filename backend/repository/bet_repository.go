@@ -3,15 +3,19 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"github.com/Skullriver/Sorbonne_PS3R.git/models"
+	"github.com/Skullriver/Sorbonne_PS3R.git/utility"
 )
 
 type BetRepository interface {
 	CreateBet(ctx context.Context, bet *models.Bet) (int, error)
 	FillTypeBet(ctx context.Context, bet BetType) error
-	GetBetByUserID(ctx context.Context, id int64) (*models.Bet, error)
+	GetBetsByUserID(ctx context.Context, id int64) (*models.Bet, error)
 	UpdateBet(ctx context.Context, bet *models.Bet) error
 	DeleteBet(ctx context.Context, id int) error
+	GetActiveBets(ctx context.Context) ([]utility.ActiveBet, error)
+	GetBetByID(ctx context.Context, betID int) (utility.SelectedBet, error)
 }
 
 type BetType interface {
@@ -48,7 +52,7 @@ func NewPostgresBetRepository(db *sql.DB) BetRepository {
 func (r *postgresBetRepository) CreateBet(ctx context.Context, bet *models.Bet) (int, error) {
 
 	// Prepare the statement with placeholders
-	stmt, err := r.db.Prepare("INSERT INTO bets (type, date_bet, limit_date, qt_victory, qt_loss, status, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id")
+	stmt, err := r.db.Prepare("INSERT INTO bets (type, title, date_bet, limit_date, qt_victory, qt_loss, status, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id")
 	if err != nil {
 		return 0, err
 	}
@@ -56,7 +60,7 @@ func (r *postgresBetRepository) CreateBet(ctx context.Context, bet *models.Bet) 
 
 	// Execute the statement with arguments
 	var id int
-	err = stmt.QueryRow(bet.Type, bet.DateBet, bet.LimitDate, bet.QtVictory, bet.QtLoss, bet.Status, bet.UserID).Scan(&id)
+	err = stmt.QueryRow(bet.Type, bet.Title, bet.DateBet, bet.LimitDate, bet.QtVictory, bet.QtLoss, bet.Status, bet.UserID).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
@@ -104,7 +108,7 @@ func (r *postgresBetRepository) FillTypeBet(ctx context.Context, bet BetType) er
 	return bet.FillTypeBet(ctx, r.db)
 }
 
-func (r *postgresBetRepository) GetBetByUserID(ctx context.Context, id int64) (*models.Bet, error) {
+func (r *postgresBetRepository) GetBetsByUserID(ctx context.Context, id int64) (*models.Bet, error) {
 
 	return &models.Bet{}, nil
 }
@@ -120,4 +124,197 @@ func (r *postgresBetRepository) DeleteBet(ctx context.Context, id int) error {
 	}
 
 	return nil
+}
+
+func (r *postgresBetRepository) GetActiveBets(ctx context.Context) ([]utility.ActiveBet, error) {
+
+	// Define the SQL query with placeholders for user ID and status
+	query := `
+        SELECT b.id, b.type, b.limit_date, b.qt_victory, b.qt_loss, b.status, b.user_id, u.username
+        FROM bets AS b
+        INNER JOIN users AS u ON b.user_id = u.id
+        WHERE b.status IN ($1, $2)
+    `
+
+	// Prepare the query
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	// Execute the query with status values
+	rows, err := stmt.QueryContext(ctx, "created", "opened")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Iterate over the rows and scan the values into ActiveBet structs
+	var activeBets []utility.ActiveBet
+	for rows.Next() {
+		var activeBet utility.ActiveBet
+		if err := rows.Scan(&activeBet.ID, &activeBet.Type, &activeBet.LimitDate, &activeBet.QtVictory, &activeBet.QtLoss, &activeBet.Status, &activeBet.UserID, &activeBet.Username); err != nil {
+			return nil, err
+		}
+		activeBets = append(activeBets, activeBet)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return activeBets, nil
+}
+
+func (r *postgresBetRepository) GetBetByID(ctx context.Context, betID int) (utility.SelectedBet, error) {
+
+	var selectedBet utility.SelectedBet
+
+	query := `
+		SELECT b.id, b.title, b.type, b.limit_date, b.qt_victory, b.qt_loss, b.status, b.user_id, u.username
+		FROM bets b
+		INNER JOIN users AS u ON b.user_id = u.id
+		WHERE b.id = $1
+	`
+
+	// Prepare the query
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return utility.SelectedBet{}, err
+	}
+	defer stmt.Close()
+
+	// Execute the query with status values
+	row, err := stmt.QueryContext(ctx, betID)
+	if err != nil {
+		return utility.SelectedBet{}, err
+	}
+	defer row.Close()
+
+	if !row.Next() {
+		return utility.SelectedBet{}, fmt.Errorf("no rows returned for betID: %d", betID)
+	}
+
+	err = row.Scan(
+		&selectedBet.ID,
+		&selectedBet.Title,
+		&selectedBet.Type,
+		&selectedBet.LimitDate,
+		&selectedBet.QtVictory,
+		&selectedBet.QtLoss,
+		&selectedBet.Status,
+		&selectedBet.CreatorID,
+		&selectedBet.CreatorUsername,
+	)
+	if err != nil {
+		return utility.SelectedBet{}, err
+	}
+
+	if selectedBet.Type == 1 {
+
+		query = `
+		SELECT bt.m_r, bt.num_type, bt.value
+		FROM bet_type1 bt
+		WHERE bt.id = $1
+	`
+
+		// Prepare the query
+		stmt, err = r.db.PrepareContext(ctx, query)
+		if err != nil {
+			return selectedBet, err
+		}
+		defer stmt.Close()
+
+		// Execute the query with status values
+		row, err = stmt.QueryContext(ctx, betID)
+		if err != nil {
+			return selectedBet, err
+		}
+		defer row.Close()
+
+		if !row.Next() {
+			return selectedBet, fmt.Errorf("no rows bet_type returned for betID: %d", betID)
+		}
+
+		err = row.Scan(
+			&selectedBet.MR,
+			&selectedBet.NumType,
+			&selectedBet.Value,
+		)
+		if err != nil {
+			return selectedBet, err
+		}
+	}
+
+	if selectedBet.Type == 2 {
+
+		query = `
+		SELECT bt.m_r, bt.line
+		FROM bet_type2 bt
+		WHERE bt.id = $1
+	`
+
+		// Prepare the query
+		stmt, err = r.db.PrepareContext(ctx, query)
+		if err != nil {
+			return selectedBet, err
+		}
+		defer stmt.Close()
+
+		// Execute the query with status values
+		row, err = stmt.QueryContext(ctx, betID)
+		if err != nil {
+			return selectedBet, err
+		}
+		defer row.Close()
+
+		if !row.Next() {
+			return selectedBet, fmt.Errorf("no rows bet_type returned for betID: %d", betID)
+		}
+
+		err = row.Scan(
+			&selectedBet.MR,
+			&selectedBet.Line,
+		)
+		if err != nil {
+			return selectedBet, err
+		}
+	}
+
+	if selectedBet.Type == 3 {
+
+		query = `
+		SELECT bt.m_r, bt.value
+		FROM bet_type3 bt
+		WHERE bt.id = $1
+	`
+
+		// Prepare the query
+		stmt, err = r.db.PrepareContext(ctx, query)
+		if err != nil {
+			return selectedBet, err
+		}
+		defer stmt.Close()
+
+		// Execute the query with status values
+		row, err = stmt.QueryContext(ctx, betID)
+		if err != nil {
+			return selectedBet, err
+		}
+		defer row.Close()
+
+		if !row.Next() {
+			return selectedBet, fmt.Errorf("no rows bet_type returned for betID: %d", betID)
+		}
+
+		err = row.Scan(
+			&selectedBet.MR,
+			&selectedBet.Value,
+		)
+		if err != nil {
+			return selectedBet, err
+		}
+	}
+
+	return selectedBet, nil
 }

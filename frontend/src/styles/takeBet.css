@@ -1,0 +1,53 @@
+.tb-form-block-line-1{
+    display: flex;
+    justify-content: space-between;
+}
+
+.tb-form-block-line-1 div:nth-child(1){
+    width: 66%;
+}
+.tb-form-block-line-1 div:nth-child(2){
+    width: 33%;
+}
+.tb-form-block-2{
+    width: 100%;
+    display: flex;
+}
+
+.tb-form-type1-block, .tb-form-qt-block, .tb-form-bet-result {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.tb-form-type1-block > div {
+    width: 33%;
+}
+.tb-form-qt-block > div{
+    width: 33%;
+}
+.tb-qtDefeat{
+    color: darkred;
+}
+
+.tb-qtVictory{
+    color: darkgreen;
+}
+.tb-title{
+    display: flex;
+    justify-content: space-between;
+}
+
+.tb-footer {
+    display: flex;
+    width: 66%;
+}
+
+.tb-form-bet-result > div, .tb-footer > div{
+    width: 50%;
+}
+
+
+.tb-amount{
+    width: 50%;
+}
