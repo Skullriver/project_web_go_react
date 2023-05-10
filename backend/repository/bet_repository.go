@@ -16,6 +16,7 @@ type BetRepository interface {
 	DeleteBet(ctx context.Context, id int) error
 	GetActiveBets(ctx context.Context) ([]utility.ActiveBet, error)
 	GetBetByID(ctx context.Context, betID int) (utility.SelectedBet, error)
+	CreateTicket(ctx context.Context, betID int, userID int64, bid bool, value float64) (int, error)
 }
 
 type BetType interface {
@@ -317,4 +318,28 @@ func (r *postgresBetRepository) GetBetByID(ctx context.Context, betID int) (util
 	}
 
 	return selectedBet, nil
+}
+
+func (r *postgresBetRepository) CreateTicket(ctx context.Context, betID int, userID int64, bid bool, value float64) (int, error) {
+
+	query := `
+		INSERT INTO tickets (user_id, bet_id, bid, value,status) VALUES ($1, $2, $3, $4, $5) RETURNING id
+	`
+
+	// Prepare the query
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+
+	var id int
+
+	// Execute the query with values
+	err = stmt.QueryRowContext(ctx, userID, betID, bid, value, "opened").Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
 }

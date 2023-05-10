@@ -124,7 +124,10 @@ func (h *BetHandler) CreateBetHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	// Print the response body
 	resp := utility.BetCreationResponse{Message: fmt.Sprintf("Bet #%d was created", BetID), BetID: BetID}
-	json.NewEncoder(w).Encode(resp)
+	err = json.NewEncoder(w).Encode(resp)
+	if err != nil {
+		return
+	}
 
 }
 
@@ -167,7 +170,10 @@ func (h *BetHandler) GetActiveBetsHandler(w http.ResponseWriter, r *http.Request
 		return
 	}
 	// Print the response body
-	json.NewEncoder(w).Encode(bets)
+	err = json.NewEncoder(w).Encode(bets)
+	if err != nil {
+		return
+	}
 }
 
 func (h *BetHandler) GetBetHandler(w http.ResponseWriter, r *http.Request) {
@@ -217,5 +223,61 @@ func (h *BetHandler) GetBetHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// Print the response body
-	json.NewEncoder(w).Encode(bet)
+	err = json.NewEncoder(w).Encode(bet)
+	if err != nil {
+		return
+	}
+}
+
+func (h *BetHandler) TakeBetHandler(w http.ResponseWriter, r *http.Request) {
+	// Create a new context with a timeout of 5 seconds
+	timeString := os.Getenv("CONTEXT_TIME")
+	timeValue, err := strconv.Atoi(timeString)
+
+	if err != nil {
+		// Handle error
+		panic(err)
+	}
+
+	contextTime := time.Duration(timeValue) * time.Second
+	ctx, cancel := context.WithTimeout(context.Background(), contextTime)
+	defer cancel()
+
+	// Get token from Authorization header
+	authHeader := r.Header.Get("Authorization")
+	if authHeader == "" {
+		// Return an error response if no Authorization header is found
+		http.Error(w, "Unauthorized", http.StatusUnauthorized)
+		return
+	}
+
+	// Parse token from Authorization header
+	tokenString := strings.Replace(authHeader, "Bearer ", "", 1)
+	userID, err := h.auth.VerifyToken(ctx, tokenString)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	var req utility.TakeBetRequest
+	err = json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	// Call the
+	TicketID, err := h.api.TakeBet(ctx, req, userID)
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	// Print the response body
+	resp := utility.BetTakingResponse{Message: fmt.Sprintf("Bet #%d was taken", TicketID), TicketID: TicketID}
+	err = json.NewEncoder(w).Encode(resp)
+	if err != nil {
+		return
+	}
+
 }

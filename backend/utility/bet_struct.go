@@ -30,6 +30,11 @@ type BetCreationResponse struct {
 	Message string `json:"Message"`
 }
 
+type BetTakingResponse struct {
+	TicketID int    `json:"ticket_id"`
+	Message  string `json:"Message"`
+}
+
 type ActiveBet struct {
 	ID        int       `json:"id"`
 	Type      int       `json:"type"`
@@ -55,4 +60,10 @@ type SelectedBet struct {
 	Status          string    `json:"status"`
 	CreatorID       string    `json:"creator_id"`
 	CreatorUsername string    `json:"creator_username"`
+}
+
+type TakeBetRequest struct {
+	BetID    int    `json:"bet_id"`
+	Bid      string `json:"bid"`
+	BetValue string `json:"bet_value"`
 }

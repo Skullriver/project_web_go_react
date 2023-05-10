@@ -20,8 +20,17 @@
     justify-content: space-between;
 }
 
+.tb-form-type2-block{
+    width: 66%;
+    display: flex;
+    justify-content: space-between;
+}
+
 .tb-form-type1-block > div {
     width: 33%;
+}
+.tb-form-type2-block > div{
+    width: 50%;
 }
 .tb-form-qt-block > div{
     width: 33%;
@@ -50,4 +59,7 @@
 
 .tb-amount{
     width: 50%;
+}
+.winText{
+    color: darkgreen;
 }

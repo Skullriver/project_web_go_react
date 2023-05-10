@@ -165,6 +165,61 @@ func (s *BetService) CreateBet(ctx context.Context, req utility.CreateBetRequest
 	return betID, nil
 }
 
+func (s *BetService) TakeBet(ctx context.Context, req utility.TakeBetRequest, userID int64) (int, error) {
+
+	// Check if user with given email exists
+	user, err := s.UserRepository.GetUserByID(ctx, userID)
+	if err != nil {
+		return 0, errors.New("bet taking failed: invalid userID")
+	}
+
+	//Get selected bet
+	bet, err := s.GetBetByID(ctx, req.BetID)
+	if err != nil {
+		return 0, errors.New("bet taking failed: invalid betID")
+	}
+
+	// Check if bet's limit date is in the future
+	if bet.LimitDate.Before(time.Now()) {
+		return 0, errors.New("bet taking failed: limit date has passed")
+	}
+
+	betVal, err := strconv.ParseFloat(req.BetValue, 64)
+	if err != nil {
+		return 0, errors.New("bet taking failed: invalid bet Value")
+	}
+
+	// Check if user's balance is sufficient for the bet value
+	if betVal < 200 {
+		return 0, errors.New("bet taking failed: bet Value should be more than 200 ")
+	}
+
+	// Check if user's balance is sufficient for the bet value
+	if betVal > user.AccountBalance {
+		return 0, errors.New("bet taking failed: insufficient balance")
+	}
+
+	// Check if bid value is correct
+	if req.Bid != "oui" && req.Bid != "non" {
+		return 0, errors.New("bet taking failed: incorrect bid")
+	}
+
+	bid := false
+	if req.Bid == "oui" {
+		bid = true
+	}
+
+	// Call the createTicket function with the necessary parameters
+	ticketID, err := s.BetRepository.CreateTicket(ctx, bet.ID, userID, bid, betVal)
+	if err != nil {
+		return 0, errors.New("bet taking failed: failed to create ticket")
+	}
+
+	// Return the ticket ID as the success result
+	return ticketID, nil
+
+}
+
 func (s *BetService) GetActiveBets(ctx context.Context) ([]utility.ActiveBet, error) {
 
 	bets, err := s.BetRepository.GetActiveBets(ctx)
