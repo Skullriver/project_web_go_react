@@ -55,25 +55,19 @@ func (s *BetService) GetInfoForCreation(ctx context.Context) utility.BetCreation
 
 func (s *BetService) CreateBet(ctx context.Context, req utility.CreateBetRequest, userID int64) (int, error) {
 
-	// Check if user with given email exists
-	_, err := s.UserRepository.GetUserByID(ctx, userID)
-	if err != nil {
-		return 0, errors.New("bet creation failed: invalid userID")
-	}
-
 	typeInt, err := strconv.Atoi(req.Type)
 	if err != nil {
 		return 0, errors.New("bet creation failed: invalid type")
 	}
 
 	QtVictoryFloat, err := strconv.ParseFloat(req.QtVictory, 64)
-	if err != nil {
+	if err != nil || QtVictoryFloat > 3 || QtVictoryFloat < 1 {
 		return 0, errors.New("bet creation failed: invalid QtVictory")
 	}
 
 	QtLossFloat, err := strconv.ParseFloat(req.QtDefeat, 64)
-	if err != nil {
-		return 0, errors.New("bet creation failed: invalid QtVictory")
+	if err != nil || QtLossFloat > 3 || QtLossFloat < 1 {
+		return 0, errors.New("bet creation failed: invalid QtDefeat")
 	}
 
 	lt, err := time.Parse(time.RFC3339, req.LimitDate)
@@ -83,7 +77,11 @@ func (s *BetService) CreateBet(ctx context.Context, req utility.CreateBetRequest
 
 	st, err := time.Parse(time.RFC3339, req.StartDay)
 	if err != nil {
-		return 0, errors.New("bet creation failed: invalid LimitDate")
+		return 0, errors.New("bet creation failed: invalid StartDay")
+	}
+
+	if lt.After(st) || st.Equal(lt) {
+		return 0, errors.New("bet creation failed: LimitDate is after StartDay")
 	}
 
 	// Create a new bet object
@@ -238,4 +236,24 @@ func (s *BetService) GetBetByID(ctx context.Context, betID int) (utility.Selecte
 	}
 
 	return bet, nil
+}
+
+func (s *BetService) GetBetsByUserID(ctx context.Context, userID int64) ([]utility.ActiveBet, error) {
+
+	bets, err := s.BetRepository.GetBetsByUserID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return bets, nil
+}
+
+func (s *BetService) GetTicketsByUserID(ctx context.Context, userID int64) ([]utility.Ticket, error) {
+
+	tickets, err := s.BetRepository.GetTicketsByUserID(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	return tickets, nil
 }

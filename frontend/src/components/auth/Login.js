@@ -1,14 +1,25 @@
-import React, {Component} from "react";
+import React, {Component, useEffect} from "react";
 import axios from 'axios';
 import '../../styles/auth.css';
 import {useNavigate} from "react-router-dom";
 import {Alert} from "reactstrap";
+import withAuth from "./CheckAuth";
 
 let endpoint = "http://localhost:8080/user/login"
 
 const withNavigate = (Component) => {
     return function WrappedComponent(props) {
         const navigate = useNavigate();
+
+        const isAuthenticated = !!localStorage.getItem('token');
+
+        useEffect(() => {
+
+            if (isAuthenticated) {
+                navigate('/'); // Redirect to the desired page for authenticated users
+            }
+        }, [navigate]);
+
         return <Component navigate={navigate} {...props} />;
     }
 };
@@ -100,4 +111,4 @@ class Login extends Component {
 }
 
 
-export default withNavigate(Login);
+export default withAuth(withNavigate(Login));

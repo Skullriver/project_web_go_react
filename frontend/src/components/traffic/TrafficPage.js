@@ -7,8 +7,18 @@ import {Button, Col, Container, Row} from "reactstrap";
 import CalendarApp from "../utils/Calendar";
 import {RxUpdate} from "react-icons/rx";
 import withAuth from "../auth/CheckAuth";
+import UserHeader from "../user/UserHeader";
+import {useNavigate} from "react-router-dom";
 
 let endpoint = "http://localhost:8080/api/traffic"
+
+const withNavigate = (Component) => {
+    return function WrappedComponent(props) {
+        const navigate = useNavigate();
+        const isAuthenticated = !!localStorage.getItem('token');
+        return isAuthenticated ? <Component navigate={navigate} {...props} /> : null;
+    }
+};
 
 class TrafficPage extends Component {
 
@@ -64,6 +74,7 @@ class TrafficPage extends Component {
 
         return (
             <div className="main-container">
+                <UserHeader/>
                 <div className="log-options">
                     <CalendarApp onChange={this.changeDate}/>
                     <div>
@@ -88,4 +99,4 @@ class TrafficPage extends Component {
     }
 }
 
-export default withAuth(TrafficPage);
+export default withAuth(withNavigate(TrafficPage));

@@ -5,11 +5,13 @@ import CreationModal from "./CreationModal";
 import withAuth from "../auth/CheckAuth";
 import {useNavigate} from "react-router-dom";
 import TakeBetModal from "./TakeBetModal";
+import UserHeader from "../user/UserHeader";
 
 const withNavigate = (Component) => {
     return function WrappedComponent(props) {
         const navigate = useNavigate();
-        return <Component navigate={navigate} {...props} />;
+        const isAuthenticated = !!localStorage.getItem('token');
+        return isAuthenticated ? <Component navigate={navigate} {...props} /> : null;
     }
 };
 
@@ -82,20 +84,18 @@ class BetsPage extends Component {
 
     };
 
-    handleExit = () => {
-        localStorage.removeItem('token');
-        this.props.navigate('/login');
-    };
+
 
     render() {
 
         return (
             <div className="main-container">
+                <UserHeader/>
                 <Container fluid style={{marginTop: "15px", padding: "0 50px"}}>
                     <Row>
                         <Col>
                             <div>
-                                <CreationModal/>
+
                                 {!this.state.betsList || this.state.betsList.length <= 0 ? (
                                     <Spinner color="secondary" size="sm">
                                         Loading...
@@ -150,7 +150,7 @@ class BetsPage extends Component {
                                 )
                                 }
                             </div>
-                            <button onClick={this.handleExit}>Exit</button>
+
                         </Col>
                     </Row>
                 </Container>

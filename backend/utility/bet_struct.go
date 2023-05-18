@@ -46,6 +46,16 @@ type ActiveBet struct {
 	Username  string    `json:"username"`
 }
 
+type Ticket struct {
+	ID     int       `json:"id"`
+	UserID int       `json:"user_id"`
+	BetID  int       `json:"bet_id"`
+	Bid    bool      `json:"bid"`
+	Value  float64   `json:"value"`
+	Status string    `json:"status"`
+	Bet    ActiveBet `json:"bet"`
+}
+
 type SelectedBet struct {
 	ID              int       `json:"id"`
 	Title           string    `json:"title"`

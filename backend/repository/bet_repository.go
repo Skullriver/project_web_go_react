@@ -11,12 +11,13 @@ import (
 type BetRepository interface {
 	CreateBet(ctx context.Context, bet *models.Bet) (int, error)
 	FillTypeBet(ctx context.Context, bet BetType) error
-	GetBetsByUserID(ctx context.Context, id int64) (*models.Bet, error)
+	GetBetsByUserID(ctx context.Context, id int64) ([]utility.ActiveBet, error)
 	UpdateBet(ctx context.Context, bet *models.Bet) error
 	DeleteBet(ctx context.Context, id int) error
 	GetActiveBets(ctx context.Context) ([]utility.ActiveBet, error)
 	GetBetByID(ctx context.Context, betID int) (utility.SelectedBet, error)
 	CreateTicket(ctx context.Context, betID int, userID int64, bid bool, value float64) (int, error)
+	GetTicketsByUserID(ctx context.Context, userID int64) ([]utility.Ticket, error)
 }
 
 type BetType interface {
@@ -109,9 +110,112 @@ func (r *postgresBetRepository) FillTypeBet(ctx context.Context, bet BetType) er
 	return bet.FillTypeBet(ctx, r.db)
 }
 
-func (r *postgresBetRepository) GetBetsByUserID(ctx context.Context, id int64) (*models.Bet, error) {
+func (r *postgresBetRepository) GetBetsByUserID(ctx context.Context, userID int64) ([]utility.ActiveBet, error) {
 
-	return &models.Bet{}, nil
+	// Define the SQL query with placeholders for user ID and status
+	query := `
+        SELECT b.id, b.type, b.limit_date, b.qt_victory, b.qt_loss, b.status, b.user_id, u.username
+		FROM bets b
+		INNER JOIN users AS u ON b.user_id = u.id
+        WHERE b.user_id = $1
+    `
+
+	// Prepare the query
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	// Execute the query with status values
+	rows, err := stmt.QueryContext(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Iterate over the rows and scan the values into ActiveBet structs
+	var activeBets []utility.ActiveBet
+	for rows.Next() {
+		var activeBet utility.ActiveBet
+		if err := rows.Scan(
+			&activeBet.ID,
+			&activeBet.Type,
+			&activeBet.LimitDate,
+			&activeBet.QtVictory,
+			&activeBet.QtLoss,
+			&activeBet.Status,
+			&activeBet.UserID,
+			&activeBet.Username); err != nil {
+			return nil, err
+		}
+		activeBets = append(activeBets, activeBet)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return activeBets, nil
+}
+
+func (r *postgresBetRepository) GetTicketsByUserID(ctx context.Context, userID int64) ([]utility.Ticket, error) {
+
+	// Define the SQL query with placeholders for user ID and status
+	query := `
+        SELECT t.id, t.user_id, t.bet_id, t.bid, t.value, t.status, 
+               b.id, b.type, b.limit_date, b.qt_victory, b.qt_loss, 
+               b.status, b.user_id, u.username
+		FROM tickets t
+		INNER JOIN bets AS b ON t.bet_id = b.id 
+		INNER JOIN users AS u ON t.user_id = u.id
+        WHERE t.user_id = $1
+    `
+
+	// Prepare the query
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	// Execute the query with status values
+	rows, err := stmt.QueryContext(ctx, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Iterate over the rows and scan the values into ActiveBet structs
+	var activeTickets []utility.Ticket
+	for rows.Next() {
+		var activeBet utility.ActiveBet
+		var ticket utility.Ticket
+		if err := rows.Scan(
+			&ticket.ID,
+			&ticket.UserID,
+			&ticket.BetID,
+			&ticket.Bid,
+			&ticket.Value,
+			&ticket.Status,
+			&activeBet.ID,
+			&activeBet.Type,
+			&activeBet.LimitDate,
+			&activeBet.QtVictory,
+			&activeBet.QtLoss,
+			&activeBet.Status,
+			&activeBet.UserID,
+			&activeBet.Username,
+		); err != nil {
+			return nil, err
+		}
+		ticket.Bet = activeBet
+		activeTickets = append(activeTickets, ticket)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return activeTickets, nil
 }
 
 func (r *postgresBetRepository) UpdateBet(ctx context.Context, bet *models.Bet) error {
