@@ -36,7 +36,6 @@
 }
 
 .accordion-icons{
-    width: 10%;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -60,6 +59,7 @@ button svg{
     align-items: center;
     border-radius: 50%;
     width: 40px;
+    min-width: 40px;
     height: 40px;
     font-size: 18px;
     margin: 0 10px 0 0;
@@ -70,6 +70,14 @@ button svg{
 }
 
 .logo{
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
     max-width: 40px;
     max-height: 40px;
+}
+
+.container-fluid{
+    margin-top: 15px;
+    padding: 0 50px;
 }

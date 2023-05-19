@@ -103,13 +103,12 @@ class BetsPage extends Component {
                                 <Row>
                                     <Col>
                                         <div>
-
                                             {!this.state.betsList || this.state.betsList.length <= 0 ? (
                                                 <Spinner color="secondary" size="sm">
                                                     Loading...
                                                 </Spinner>
                                             ) : (
-                                                <Table>
+                                                <Table responsive>
                                                     <thead>
                                                     <tr>
                                                         <th>

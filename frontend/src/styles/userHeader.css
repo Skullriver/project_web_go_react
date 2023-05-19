@@ -7,3 +7,24 @@
 .user-header a{
     color: black;
 }
+
+@media screen and (max-width:1100px) {
+    .user-header{
+       max-width: 80%;
+    }
+}
+
+@media screen and (max-width:879px) {
+    .main-container{
+        margin: 100px 0;
+    }
+}
+
+@media screen and (max-width:500px) {
+    .user-header{
+        flex-direction: column;
+    }
+    .user-header div{
+        padding-bottom: 5px;
+    }
+}

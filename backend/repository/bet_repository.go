@@ -13,7 +13,7 @@ type BetRepository interface {
 	CreateBet(ctx context.Context, bet *models.Bet) (int, error)
 	FillTypeBet(ctx context.Context, bet BetType) error
 	GetBetsByUserID(ctx context.Context, id int64) ([]utility.ActiveBet, error)
-	UpdateBet(ctx context.Context, bet *models.Bet) error
+	UpdateBetStatus(ctx context.Context, betID int, betStatus string) error
 	DeleteBet(ctx context.Context, id int) error
 	GetActiveBets(ctx context.Context) ([]utility.ActiveBet, error)
 	GetBetByID(ctx context.Context, betID int) (utility.SelectedBet, error)
@@ -257,7 +257,13 @@ func (r *postgresBetRepository) GetTicketsByUserID(ctx context.Context, userID i
 	return activeTickets, nil
 }
 
-func (r *postgresBetRepository) UpdateBet(ctx context.Context, bet *models.Bet) error {
+func (r *postgresBetRepository) UpdateBetStatus(ctx context.Context, betID int, betStatus string) error {
+
+	query := "UPDATE bets SET status = $1 WHERE id = $2"
+	_, err := r.db.ExecContext(ctx, query, betStatus, betID)
+	if err != nil {
+		return fmt.Errorf("failed to update bets: %v", err)
+	}
 	return nil
 }
 

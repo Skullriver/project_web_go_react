@@ -255,6 +255,13 @@ func (s *BetService) TakeBet(ctx context.Context, req utility.TakeBetRequest, us
 		return 0, errors.New("updating user balance failed")
 	}
 
+	if bet.CreatorID != strconv.FormatInt(userID, 10) {
+		err = s.BetRepository.UpdateBetStatus(ctx, bet.ID, "opened")
+		if err != nil {
+			return 0, errors.New("updating bet status failed")
+		}
+	}
+
 	// Return the ticket ID as the success result
 	return ticketID, nil
 

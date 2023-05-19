@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/Skullriver/Sorbonne_PS3R.git/repository"
 	"github.com/Skullriver/Sorbonne_PS3R.git/utility"
+	"time"
 )
 
 type TrafficService struct {
@@ -13,7 +14,11 @@ type TrafficService struct {
 	LogRepository        repository.LogRepository
 }
 
-func (s *TrafficService) GetTraffic(ctx context.Context) utility.TrafficResponse {
+func (s *TrafficService) GetTraffic(ctx context.Context, dateStart string, dateEnd string) utility.TrafficResponse {
+
+	dateS, err := time.Parse("02012006", dateStart)
+	dateE, err := time.Parse("02012006", dateEnd)
+	dateE = dateE.AddDate(0, 0, 1)
 
 	lines, err := s.LineRepository.GetLines(ctx)
 	if err != nil {
@@ -58,7 +63,9 @@ func (s *TrafficService) GetTraffic(ctx context.Context) utility.TrafficResponse
 				disruptionObj.ApplicationStart = disruption.ApplicationStart.Format("02/01/2006 15:04:05")
 				disruptionObj.ApplicationEnd = disruption.ApplicationEnd.Format("02/01/2006 15:04:05")
 
-				disruptionsObj = append(disruptionsObj, disruptionObj)
+				if disruption.CreatedAt.After(dateS) && dateE.After(disruption.CreatedAt) {
+					disruptionsObj = append(disruptionsObj, disruptionObj)
+				}
 			}
 			lineObj.Disruptions = disruptionsObj
 

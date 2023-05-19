@@ -21,17 +21,13 @@ class Menu extends Component {
                 <div className="App">
                     <nav className="navbar navbar-expand-lg navbar-light fixed-top">
                         <div className="container">
-                            <Link className="navbar-brand" to={'/'}>
-                                Welcome
-                            </Link>
-                            <div className="collapse navbar-collapse" id="navbarTogglerDemo02">
-                                <ul className="navbar-nav ml-auto">
-                                    <li className="nav-item">
-                                        <Link className="nav-link" to={'/traffic'}>
-                                            Traffic status
-                                        </Link>
-                                    </li>
-                                </ul>
+                            <div className="links">
+                                <Link className="navbar-brand" to={'/'}>
+                                    Welcome
+                                </Link>
+                                <Link className="nav-link" to={'/traffic'}>
+                                    Traffic status
+                                </Link>
                             </div>
                             <div><a href="#" onClick={this.handleExit}><RxExit/></a></div>
                         </div>

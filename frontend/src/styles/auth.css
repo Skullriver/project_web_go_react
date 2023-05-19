@@ -60,3 +60,10 @@ body, html, .App, #root, .auth-wrapper {
 .forgot-password a {
     color: #167bff;
 }
+.links{
+    display: flex;
+    align-items: baseline;
+}
+.nav-link{
+    color: #7f7d7d !important;
+}

@@ -9,3 +9,9 @@
 .my-bets tr:hover {
     cursor:pointer;
 }
+
+@media screen and (max-width:1300px) {
+    .my-bets{
+        flex-direction: column;
+    }
+}

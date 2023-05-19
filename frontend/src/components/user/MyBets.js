@@ -190,12 +190,12 @@ class MyBets extends Component {
                             <tbody>
                             {
                                 this.state.user.taken_bets.map(bet => (
-                                    <tr key={bet.id} onClick={() => this.handleTicketClick(bet.id, bet)}>
+                                    <tr key={bet.id} onClick={() => this.handleTicketClick(bet.bet.id, bet)}>
                                         <th scope="row"> {bet.bet.id}</th>
                                         <td> {new Date(bet.bet.bet_date).toLocaleDateString("fr", options)}</td>
                                         <td> {bet.bet.type === 1 ? 'Proportion de lignes où il y aura un problème' : bet.type === 2 ? 'La présence de problèmes sur une ligne' : 'Le nombre total d\'incidents pour cette journée'} </td>
                                         <td> {bet.bid ? bet.value * bet.bet.qt_victory : bet.value * bet.bet.qt_loss }</td>
-                                        <td> {bet.bet.status}</td>
+                                        <td> {bet.status}</td>
                                     </tr>
                                 ))
                             }

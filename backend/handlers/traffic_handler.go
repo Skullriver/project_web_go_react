@@ -74,7 +74,11 @@ func (h *TrafficHandler) TrafficHandler(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	response := h.api.GetTraffic(ctx)
+	// Extract the GET parameters from the request URL
+	dateStart := r.URL.Query().Get("dateStart")
+	dateEnd := r.URL.Query().Get("dateEnd")
+
+	response := h.api.GetTraffic(ctx, dateStart, dateEnd)
 	// Print the response body
 	err = json.NewEncoder(w).Encode(response)
 	if err != nil {

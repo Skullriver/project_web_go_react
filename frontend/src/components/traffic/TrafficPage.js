@@ -84,7 +84,7 @@ class TrafficPage extends Component {
                         </Button>
                     </div>
                 </div>
-                <Container fluid style={{marginTop: "15px", padding: "0 50px"}}>
+                <Container fluid >
                     <Row>
                         <Col>
                             <TrafficList
