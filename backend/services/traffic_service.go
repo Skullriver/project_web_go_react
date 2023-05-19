@@ -17,14 +17,20 @@ type TrafficService struct {
 func (s *TrafficService) GetTraffic(ctx context.Context, dateStart string, dateEnd string) utility.TrafficResponse {
 
 	dateS, err := time.Parse("02012006", dateStart)
+	if err != nil {
+		return nil
+	}
 	dateE, err := time.Parse("02012006", dateEnd)
+	if err != nil {
+		return nil
+	}
 	dateE = dateE.AddDate(0, 0, 1)
 
 	lines, err := s.LineRepository.GetLines(ctx)
 	if err != nil {
 		return nil
 	}
-	disruptions, err := s.DisruptionRepository.GetDisruptionsMap(ctx)
+	disruptions, err := s.DisruptionRepository.GetDisruptionsMap(ctx, dateS, dateE)
 	if err != nil {
 		return nil
 	}
@@ -63,9 +69,7 @@ func (s *TrafficService) GetTraffic(ctx context.Context, dateStart string, dateE
 				disruptionObj.ApplicationStart = disruption.ApplicationStart.Format("02/01/2006 15:04:05")
 				disruptionObj.ApplicationEnd = disruption.ApplicationEnd.Format("02/01/2006 15:04:05")
 
-				if disruption.CreatedAt.After(dateS) && dateE.After(disruption.CreatedAt) {
-					disruptionsObj = append(disruptionsObj, disruptionObj)
-				}
+				disruptionsObj = append(disruptionsObj, disruptionObj)
 			}
 			lineObj.Disruptions = disruptionsObj
 

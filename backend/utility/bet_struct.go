@@ -81,3 +81,16 @@ type TakeBetRequest struct {
 	Bid      string `json:"bid"`
 	BetValue string `json:"bet_value"`
 }
+
+type BetToCheck struct {
+	ID      int             `json:"id"`
+	Tickets []TicketToCheck `json:"tickets"`
+}
+
+type TicketToCheck struct {
+	ID     int     `json:"id"`
+	UserID int     `json:"user_id"`
+	Bid    bool    `json:"bid"`
+	Value  float64 `json:"value"`
+	Status string  `json:"status"`
+}

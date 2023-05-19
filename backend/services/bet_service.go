@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"github.com/Skullriver/Sorbonne_PS3R.git/models"
 	"github.com/Skullriver/Sorbonne_PS3R.git/repository"
@@ -16,6 +17,16 @@ type BetService struct {
 	DisruptionRepository repository.DisruptionRepository
 	LogRepository        repository.LogRepository
 	BetRepository        repository.BetRepository
+}
+
+func NewBetService(db *sql.DB) *BetService {
+	return &BetService{
+		UserRepository:       repository.NewPostgresUserRepository(db),
+		LineRepository:       repository.NewPostgresLineRepository(db),
+		DisruptionRepository: repository.NewPostgresDisruptionRepository(db),
+		LogRepository:        repository.NewPostgresLogRepository(db),
+		BetRepository:        repository.NewPostgresBetRepository(db),
+	}
 }
 
 func (s *BetService) GetInfoForCreation(ctx context.Context) utility.BetCreationInfoResponse {
@@ -311,4 +322,218 @@ func (s *BetService) GetTicketsByUserID(ctx context.Context, userID int64) ([]ut
 	}
 
 	return tickets, nil
+}
+
+func (s *BetService) CheckBets(ctx context.Context) {
+
+	// Get the current date
+	currentTime := time.Now()
+
+	// Subtract one day from the current date
+	previousDay := currentTime.AddDate(0, 0, -1)
+
+	dateS := time.Date(previousDay.Year(), previousDay.Month(), previousDay.Day(), 0, 0, 0, 0, previousDay.Location())
+	dateE := time.Date(currentTime.Year(), currentTime.Month(), currentTime.Day(), 0, 0, 0, 0, currentTime.Location())
+
+	lines, err := s.LineRepository.GetLines(ctx)
+	if err != nil {
+		return
+	}
+
+	disruptions, err := s.DisruptionRepository.GetDisruptionsMap(ctx, dateS, dateE)
+	if err != nil {
+		return
+	}
+
+	var totalLinesMetro int
+	var totalLinesRER int
+
+	var totalProblemLinesMetro int
+	var totalProblemLinesRER int
+
+	for _, line := range lines {
+		if line.PhysicalMode == "physical_mode:Metro" {
+			totalLinesMetro++
+		} else {
+			totalLinesRER++
+		}
+		_, exists := disruptions[line.LineID]
+		if exists {
+			if line.PhysicalMode == "physical_mode:Metro" {
+				totalProblemLinesMetro++
+			} else {
+				totalProblemLinesRER++
+			}
+		}
+	}
+
+	percentProblemsMetro := float64(totalProblemLinesMetro) / float64(totalLinesMetro) * 100.0
+	percentProblemsRER := float64(totalProblemLinesRER) / float64(totalLinesRER) * 100.0
+
+	bets, err := s.BetRepository.GetBetsToCheck(ctx, dateS, dateE)
+
+	for _, bet := range bets {
+
+		betObj, err := s.BetRepository.GetBetByID(ctx, bet.ID)
+		if err != nil {
+			return
+		}
+
+		if betObj.Status == "created" {
+			err := s.BetRepository.UpdateBetStatus(ctx, betObj.ID, "expired")
+			if err != nil {
+				return
+			}
+			for _, ticket := range bet.Tickets {
+				balance, err := s.UserRepository.GetUserBalance(ctx, int64(ticket.UserID))
+				if err != nil {
+					return
+				}
+				err = s.UserRepository.UpdateUserBalance(ctx, balance+ticket.Value, int64(ticket.UserID))
+				if err != nil {
+					return
+				}
+				err = s.BetRepository.UpdateTicketStatus(ctx, ticket.ID, "canceled")
+				if err != nil {
+					return
+				}
+			}
+
+		} else if betObj.Status == "opened" {
+
+			//percentage of problems
+			if betObj.Type == 1 {
+
+				if betObj.MR == "Metro" {
+
+					// %
+					if betObj.NumType == 1 {
+
+						if betObj.Value <= percentProblemsMetro {
+							//win
+							s.ProcessTicketsWin(ctx, bet.Tickets, betObj)
+						} else {
+							s.ProcessTicketsLoss(ctx, bet.Tickets, betObj)
+						}
+						// value
+					} else {
+						if betObj.Value <= float64(totalProblemLinesMetro) {
+							//win
+							s.ProcessTicketsWin(ctx, bet.Tickets, betObj)
+						} else {
+							s.ProcessTicketsLoss(ctx, bet.Tickets, betObj)
+						}
+					}
+
+				} else { //RER
+
+					// %
+					if betObj.NumType == 1 {
+
+						if betObj.Value <= percentProblemsRER {
+							s.ProcessTicketsWin(ctx, bet.Tickets, betObj)
+						} else {
+							s.ProcessTicketsLoss(ctx, bet.Tickets, betObj)
+						}
+						// value
+					} else {
+						if betObj.Value <= float64(totalProblemLinesRER) {
+							s.ProcessTicketsWin(ctx, bet.Tickets, betObj)
+						} else {
+							s.ProcessTicketsLoss(ctx, bet.Tickets, betObj)
+						}
+					}
+
+				}
+
+				//if there is problem on the line
+			} else if betObj.Type == 2 {
+
+				_, exists := disruptions[betObj.Line]
+
+				if exists {
+					s.ProcessTicketsWin(ctx, bet.Tickets, betObj)
+				} else {
+					s.ProcessTicketsLoss(ctx, bet.Tickets, betObj)
+				}
+
+			} else if betObj.Type == 3 {
+
+				if betObj.MR == "Metro" {
+					if betObj.Value <= float64(totalProblemLinesMetro) {
+						s.ProcessTicketsWin(ctx, bet.Tickets, betObj)
+					} else {
+						s.ProcessTicketsLoss(ctx, bet.Tickets, betObj)
+					}
+				} else {
+					if betObj.Value <= float64(totalProblemLinesRER) {
+						s.ProcessTicketsWin(ctx, bet.Tickets, betObj)
+					} else {
+						s.ProcessTicketsLoss(ctx, bet.Tickets, betObj)
+					}
+				}
+
+			} else {
+				return
+			}
+
+			err := s.BetRepository.UpdateBetStatus(ctx, betObj.ID, "finished")
+			if err != nil {
+				return
+			}
+
+		}
+
+	}
+
+}
+
+func (s *BetService) ProcessTicketsWin(ctx context.Context, tickets []utility.TicketToCheck, bet utility.SelectedBet) {
+	for _, ticket := range tickets {
+		if ticket.Bid == true {
+			balance, err := s.UserRepository.GetUserBalance(ctx, int64(ticket.UserID))
+			if err != nil {
+				return
+			}
+			win := ticket.Value * bet.QtVictory
+			err = s.UserRepository.UpdateUserBalance(ctx, balance+win, int64(ticket.UserID))
+			if err != nil {
+				return
+			}
+			err = s.BetRepository.UpdateTicketStatus(ctx, ticket.ID, "win")
+			if err != nil {
+				return
+			}
+		} else {
+			err := s.BetRepository.UpdateTicketStatus(ctx, ticket.ID, "lost")
+			if err != nil {
+				return
+			}
+		}
+	}
+}
+
+func (s *BetService) ProcessTicketsLoss(ctx context.Context, tickets []utility.TicketToCheck, bet utility.SelectedBet) {
+	for _, ticket := range tickets {
+		if ticket.Bid == false {
+			balance, err := s.UserRepository.GetUserBalance(ctx, int64(ticket.UserID))
+			if err != nil {
+				return
+			}
+			win := ticket.Value * bet.QtLoss
+			err = s.UserRepository.UpdateUserBalance(ctx, balance+win, int64(ticket.UserID))
+			if err != nil {
+				return
+			}
+			err = s.BetRepository.UpdateTicketStatus(ctx, ticket.ID, "win")
+			if err != nil {
+				return
+			}
+		} else {
+			err := s.BetRepository.UpdateTicketStatus(ctx, ticket.ID, "lost")
+			if err != nil {
+				return
+			}
+		}
+	}
 }

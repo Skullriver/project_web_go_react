@@ -14,12 +14,14 @@ type BetRepository interface {
 	FillTypeBet(ctx context.Context, bet BetType) error
 	GetBetsByUserID(ctx context.Context, id int64) ([]utility.ActiveBet, error)
 	UpdateBetStatus(ctx context.Context, betID int, betStatus string) error
+	UpdateTicketStatus(ctx context.Context, ticketID int, ticketStatus string) error
 	DeleteBet(ctx context.Context, id int) error
 	GetActiveBets(ctx context.Context) ([]utility.ActiveBet, error)
 	GetBetByID(ctx context.Context, betID int) (utility.SelectedBet, error)
 	CreateTicket(ctx context.Context, betID int, userID int64, bid bool, value float64) (int, error)
 	GetTicketsByUserID(ctx context.Context, userID int64) ([]utility.Ticket, error)
 	GetBetsNbForUser(ctx context.Context, userID int64) (int, error)
+	GetBetsToCheck(ctx context.Context, dateStart time.Time, dateEnd time.Time) ([]utility.BetToCheck, error)
 }
 
 type BetType interface {
@@ -257,12 +259,72 @@ func (r *postgresBetRepository) GetTicketsByUserID(ctx context.Context, userID i
 	return activeTickets, nil
 }
 
+func (r *postgresBetRepository) GetBetsToCheck(ctx context.Context, dateStart time.Time, dateEnd time.Time) ([]utility.BetToCheck, error) {
+
+	// Define the SQL query with placeholders for user ID and status
+	query := `
+        SELECT b.id, t.id, t.user_id, t.bid, t.value, t.status
+		FROM bets b
+		INNER JOIN tickets AS t ON t.bet_id = b.id 
+        WHERE b.date_bet >= $1 AND b.date_bet <= $2
+    `
+
+	// Prepare the query
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer stmt.Close()
+
+	// Execute the query with status values
+	rows, err := stmt.QueryContext(ctx, dateStart, dateEnd)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Iterate over the rows and scan the values into ActiveBet structs
+	var bets []utility.BetToCheck
+	for rows.Next() {
+		var bet utility.BetToCheck
+		var ticket utility.TicketToCheck
+		if err := rows.Scan(
+			&bet.ID,
+			&ticket.ID,
+			&ticket.UserID,
+			&ticket.Bid,
+			&ticket.Value,
+			&ticket.Status,
+		); err != nil {
+			return nil, err
+		}
+		// Add the ticket to the respective bet
+		bet.Tickets = append(bet.Tickets, ticket)
+		bets = append(bets, bet)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return bets, nil
+}
+
 func (r *postgresBetRepository) UpdateBetStatus(ctx context.Context, betID int, betStatus string) error {
 
 	query := "UPDATE bets SET status = $1 WHERE id = $2"
 	_, err := r.db.ExecContext(ctx, query, betStatus, betID)
 	if err != nil {
 		return fmt.Errorf("failed to update bets: %v", err)
+	}
+	return nil
+}
+
+func (r *postgresBetRepository) UpdateTicketStatus(ctx context.Context, ticketID int, ticketStatus string) error {
+
+	query := "UPDATE tickets SET status = $1 WHERE id = $2"
+	_, err := r.db.ExecContext(ctx, query, ticketStatus, ticketID)
+	if err != nil {
+		return fmt.Errorf("failed to update tickets: %v", err)
 	}
 	return nil
 }

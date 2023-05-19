@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/Skullriver/Sorbonne_PS3R.git/models"
 	"github.com/Skullriver/Sorbonne_PS3R.git/utility"
+	"time"
 )
 
 var ErrNoDisruption = errors.New("no disruption found")
@@ -14,7 +15,7 @@ var ErrNoDisruption = errors.New("no disruption found")
 type DisruptionRepository interface {
 	CreateDisruption(ctx context.Context, disruption *models.Disruption) (int64, error)
 	GetDisruptionByDisruptionID(ctx context.Context, id string) (*models.Disruption, error)
-	GetDisruptionsMap(ctx context.Context) (map[string][]*utility.Disruption, error)
+	GetDisruptionsMap(ctx context.Context, dateStart time.Time, dateEnd time.Time) (map[string][]*utility.Disruption, error)
 }
 
 type postgresDisruptionRepository struct {
@@ -60,13 +61,15 @@ func (r *postgresDisruptionRepository) GetDisruptionByDisruptionID(ctx context.C
 	return disruption, nil
 }
 
-func (r *postgresDisruptionRepository) GetDisruptionsMap(ctx context.Context) (map[string][]*utility.Disruption, error) {
+func (r *postgresDisruptionRepository) GetDisruptionsMap(ctx context.Context, dateStart time.Time, dateEnd time.Time) (map[string][]*utility.Disruption, error) {
 
 	query := `
 	SELECT d.*, l.created_at FROM disruptions d
-	INNER JOIN log l ON d.id = l.disruption_id;`
+	INNER JOIN log l ON d.id = l.disruption_id
+	WHERE l.created_at > $1 AND l.created_at < $2
+	`
 
-	rows, err := r.db.QueryContext(ctx, query)
+	rows, err := r.db.QueryContext(ctx, query, dateStart, dateEnd)
 	if err != nil {
 		return nil, err
 	}

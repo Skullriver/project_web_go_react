@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"github.com/Skullriver/Sorbonne_PS3R.git/handlers"
@@ -11,6 +12,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strconv"
+	"time"
 )
 
 func init() {
@@ -56,13 +59,19 @@ func setupRoutes(db *sql.DB) *mux.Router {
 	r.HandleFunc("/api/user", betHandler.GetUserHandler).Methods("GET", "OPTIONS")
 	r.HandleFunc("/api/bets/{betId}", betHandler.GetBetHandler).Methods("GET", "OPTIONS")
 	r.HandleFunc("/api/bets/takeBet", betHandler.TakeBetHandler).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/checkBet", betHandler.CheckBetHandler).Methods("GET", "OPTIONS")
 
 	return r
 }
 
 func main() {
 
-	db, err := sql.Open("postgres", os.Getenv("DB_URI"))
+	postgresHost := os.Getenv("POSTGRES_HOST")
+	postgresUser := os.Getenv("DB_USER")
+	postgresPass := os.Getenv("DB_PASS")
+	postgresName := os.Getenv("DB_NAME")
+
+	db, err := sql.Open("postgres", fmt.Sprintf("host=%s port=5432 user=%s password=%s dbname=%s sslmode=disable", postgresHost, postgresUser, postgresPass, postgresName))
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,7 +85,21 @@ func main() {
 
 	r := setupRoutes(db)
 
-	go routines.VerifyTraffic(db)
+	timeString := os.Getenv("CONTEXT_TIME")
+	timeValue, err := strconv.Atoi(timeString)
+
+	if err != nil {
+		// Handle error
+		panic(err)
+	}
+
+	contextTime := time.Duration(timeValue) * time.Second
+
+	ctx, cancel := context.WithTimeout(context.Background(), contextTime)
+	defer cancel()
+
+	go routines.VerifyTraffic(db, ctx)
+	go routines.VerifyBet(db, ctx)
 
 	fmt.Println("starting the server on port 8080...")
 
