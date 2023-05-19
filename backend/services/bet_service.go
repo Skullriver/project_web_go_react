@@ -70,18 +70,38 @@ func (s *BetService) CreateBet(ctx context.Context, req utility.CreateBetRequest
 		return 0, errors.New("bet creation failed: invalid QtDefeat")
 	}
 
-	lt, err := time.Parse(time.RFC3339, req.LimitDate)
+	lt, err := time.Parse(time.RFC3339Nano, req.LimitDate)
 	if err != nil {
 		return 0, errors.New("bet creation failed: invalid LimitDate")
 	}
 
-	st, err := time.Parse(time.RFC3339, req.StartDay)
+	st, err := time.Parse(time.RFC3339Nano, req.StartDay)
 	if err != nil {
 		return 0, errors.New("bet creation failed: invalid StartDay")
 	}
 
 	if lt.After(st) || st.Equal(lt) {
 		return 0, errors.New("bet creation failed: LimitDate is after StartDay")
+	}
+
+	// Load the "Europe/Paris" time zone
+	location, err := time.LoadLocation("Europe/Paris")
+	if err != nil {
+		// Handle error
+		return 0, err
+	}
+
+	// Convert the parsed time to "Europe/Paris" time zone
+	lt = lt.In(location)
+	st = st.In(location)
+
+	nbBets, err := s.BetRepository.GetBetsNbForUser(ctx, userID)
+
+	if err != nil {
+		return 0, err
+	}
+	if nbBets >= 3 {
+		return 0, errors.New("bet creation failed: you can't create more bets today")
 	}
 
 	// Create a new bet object
@@ -94,6 +114,7 @@ func (s *BetService) CreateBet(ctx context.Context, req utility.CreateBetRequest
 		QtLoss:    QtLossFloat,
 		Status:    "created",
 		UserID:    userID,
+		Created:   time.Now().Local(),
 	}
 
 	// Insert the new bet object into the database
@@ -160,6 +181,17 @@ func (s *BetService) CreateBet(ctx context.Context, req utility.CreateBetRequest
 		return 0, errors.New("filling bet type failed")
 	}
 
+	balance, err := s.UserRepository.GetUserBalance(ctx, userID)
+	if err != nil {
+		return 0, err
+	}
+
+	err = s.UserRepository.UpdateUserBalance(ctx, balance+200, userID)
+	if err != nil {
+		s.BetRepository.DeleteBet(ctx, betID)
+		return 0, errors.New("updating user balance failed")
+	}
+
 	return betID, nil
 }
 
@@ -213,6 +245,16 @@ func (s *BetService) TakeBet(ctx context.Context, req utility.TakeBetRequest, us
 		return 0, errors.New("bet taking failed: failed to create ticket")
 	}
 
+	balance, err := s.UserRepository.GetUserBalance(ctx, userID)
+	if err != nil {
+		return 0, err
+	}
+
+	err = s.UserRepository.UpdateUserBalance(ctx, balance-betVal, userID)
+	if err != nil {
+		return 0, errors.New("updating user balance failed")
+	}
+
 	// Return the ticket ID as the success result
 	return ticketID, nil
 
@@ -244,6 +286,9 @@ func (s *BetService) GetBetsByUserID(ctx context.Context, userID int64) ([]utili
 	if err != nil {
 		return nil, err
 	}
+	if bets == nil {
+		bets = make([]utility.ActiveBet, 0)
+	}
 
 	return bets, nil
 }
@@ -253,6 +298,9 @@ func (s *BetService) GetTicketsByUserID(ctx context.Context, userID int64) ([]ut
 	tickets, err := s.BetRepository.GetTicketsByUserID(ctx, userID)
 	if err != nil {
 		return nil, err
+	}
+	if tickets == nil {
+		tickets = make([]utility.Ticket, 0)
 	}
 
 	return tickets, nil

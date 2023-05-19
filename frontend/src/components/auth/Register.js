@@ -113,7 +113,9 @@ class Register extends Component {
                                 Submit
                             </button>
                         </div>
-
+                        <p className="forgot-password text-right">
+                            Already have account? <a href="/login">Login</a>
+                        </p>
                     </form>
                 </div>
             </div>

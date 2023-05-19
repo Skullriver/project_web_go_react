@@ -1,12 +1,19 @@
 import {Component} from "react";
-import {BrowserRouter as Router, Link, Route, Routes} from "react-router-dom";
-
+import {BrowserRouter as Router, Link, Route, Routes, useNavigate} from "react-router-dom";
+import {RxExit} from "react-icons/rx";
 import Login from "./auth/Login";
 import TrafficPage from "./traffic/TrafficPage";
 import BetsPage from "./bets/BetsPage";
 import Register from "./auth/Register";
+import MyBets from "./user/MyBets";
 
 class Menu extends Component {
+
+    handleExit = () => {
+        localStorage.removeItem('token');
+        window.location.reload();
+    };
+
     render() {
 
         return (
@@ -26,6 +33,7 @@ class Menu extends Component {
                                     </li>
                                 </ul>
                             </div>
+                            <div><a href="#" onClick={this.handleExit}><RxExit/></a></div>
                         </div>
                     </nav>
                     <div>
@@ -35,6 +43,7 @@ class Menu extends Component {
                                 <Route path="/login" element={<Login/>}/>
                                 <Route path="/register" element={<Register/>}/>
                                 <Route path="/traffic" element={<TrafficPage/>}/>
+                                <Route path="/user" element={<MyBets/>}/>
                             </Routes>
                         </div>
                     </div>

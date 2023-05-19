@@ -70,11 +70,11 @@ function CreationModal(args) {
 
     const [responseModal, setResponseModal] = useState(false);
     const [messageModal, setMessageModal] = useState('');
-    const toggleResponseModal = () => setResponseModal(!responseModal);
+    const toggleResponseModal = () => {setResponseModal(!responseModal);window.location.reload()};
 
     const [alert, setAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
-    const onDismiss = () => setAlert(!alert);
+    const onDismiss = () => {setAlert(!alert);window.location.reload()}
 
     const [type1Visible, setType1Visible] = useState(false);
     const [type2Visible, setType2Visible] = useState(false);
@@ -414,9 +414,6 @@ function CreationModal(args) {
                     </Alert>
                     <ModalFooter>
                         <Button type="submit" color="primary">Créer</Button>
-                        {/*<Button color="primary" onClick={toggle}>*/}
-                        {/*    Do Something*/}
-                        {/*</Button>{' '}*/}
                         <Button color="secondary" onClick={toggle}>
                             Annuler
                         </Button>
@@ -429,7 +426,7 @@ function CreationModal(args) {
                 </ModalHeader>
                 <ModalBody>
                     {messageModal}
-                    You can see your tickets here -> { /*TODO add page for tickets*/ }
+                    <p>You can see your tickets <a href="/user">here</a></p>
                 </ModalBody>
             </Modal>
 

@@ -14,6 +14,7 @@ type Bet struct {
 	QtLoss    float64   `db:"qt_loss"`
 	Status    string    `db:"status"`
 	UserID    int64     `db:"user_id"`
+	Created   time.Time `db:"created"`
 }
 
 type Ticket struct {

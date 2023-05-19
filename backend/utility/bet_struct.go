@@ -37,13 +37,16 @@ type BetTakingResponse struct {
 
 type ActiveBet struct {
 	ID        int       `json:"id"`
+	Title     string    `json:"title"`
 	Type      int       `json:"type"`
+	BetDay    time.Time `json:"bet_date"`
 	LimitDate time.Time `json:"limit_date"`
 	QtVictory float64   `json:"qt_victory"`
 	QtLoss    float64   `json:"qt_loss"`
 	Status    string    `json:"status"`
 	UserID    int64     `json:"user_id"`
 	Username  string    `json:"username"`
+	Created   time.Time `json:"created"`
 }
 
 type Ticket struct {
@@ -64,6 +67,7 @@ type SelectedBet struct {
 	Line            string    `json:"line"`
 	NumType         int       `json:"num_type"`
 	Value           float64   `json:"value"`
+	BetDay          time.Time `json:"bet_date"`
 	LimitDate       time.Time `json:"limit_date"`
 	QtVictory       float64   `json:"qt_victory"`
 	QtLoss          float64   `json:"qt_loss"`

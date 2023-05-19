@@ -4,7 +4,6 @@ import axios from "axios";
 import CreationModal from "../bets/CreationModal";
 import '../../styles/userHeader.css';
 import {useNavigate} from "react-router-dom";
-import {Button} from "reactstrap";
 
 let endpointUser = "http://localhost:8080/api/user"
 
@@ -25,8 +24,8 @@ class UserHeader extends Component {
                 user_id: 0,
                 username: "",
                 balance: 0,
-                created_bets: {},
-                taken_bets: {}
+                created_bets: [],
+                taken_bets: []
             }
         };
     }
@@ -72,10 +71,14 @@ class UserHeader extends Component {
                     <div>
                         <span>Username</span>
                         <div>@{this.state.user.username}#{this.state.user.user_id}</div>
-                        <div><a href="#" onClick={this.handleExit}>log out</a></div>
+
                     </div>
                     <div>
-                        <span>Mes paris</span>
+                        <span>Balance</span>
+                        <div>{this.state.user.balance}</div>
+                    </div>
+                    <div>
+                        <span><a href="/user">Mes paris</a></span>
                         <div>
                             <div>créé : {this.state.user.created_bets.length}</div>
                             <div>participé : {this.state.user.taken_bets.length}</div>

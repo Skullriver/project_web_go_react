@@ -4,9 +4,12 @@
 }
 
 .tb-form-block-line-1 div:nth-child(1){
-    width: 66%;
+    width: 33%;
 }
 .tb-form-block-line-1 div:nth-child(2){
+    width: 33%;
+}
+.tb-form-block-line-1 div:nth-child(3){
     width: 33%;
 }
 .tb-form-block-2{

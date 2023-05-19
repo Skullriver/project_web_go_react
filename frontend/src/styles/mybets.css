@@ -1,0 +1,11 @@
+.my-bets{
+    display: flex;
+    justify-content: space-between;
+}
+.my-bets thead{
+    display: none;
+}
+
+.my-bets tr:hover {
+    cursor:pointer;
+}

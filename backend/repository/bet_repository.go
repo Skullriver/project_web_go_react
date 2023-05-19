@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/Skullriver/Sorbonne_PS3R.git/models"
 	"github.com/Skullriver/Sorbonne_PS3R.git/utility"
+	"time"
 )
 
 type BetRepository interface {
@@ -18,6 +19,7 @@ type BetRepository interface {
 	GetBetByID(ctx context.Context, betID int) (utility.SelectedBet, error)
 	CreateTicket(ctx context.Context, betID int, userID int64, bid bool, value float64) (int, error)
 	GetTicketsByUserID(ctx context.Context, userID int64) ([]utility.Ticket, error)
+	GetBetsNbForUser(ctx context.Context, userID int64) (int, error)
 }
 
 type BetType interface {
@@ -54,7 +56,10 @@ func NewPostgresBetRepository(db *sql.DB) BetRepository {
 func (r *postgresBetRepository) CreateBet(ctx context.Context, bet *models.Bet) (int, error) {
 
 	// Prepare the statement with placeholders
-	stmt, err := r.db.Prepare("INSERT INTO bets (type, title, date_bet, limit_date, qt_victory, qt_loss, status, user_id) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id")
+	stmt, err := r.db.Prepare(
+		`INSERT INTO bets (type, title, date_bet, limit_date, 
+                  qt_victory, qt_loss, status, user_id, created) 
+				VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`)
 	if err != nil {
 		return 0, err
 	}
@@ -62,7 +67,8 @@ func (r *postgresBetRepository) CreateBet(ctx context.Context, bet *models.Bet) 
 
 	// Execute the statement with arguments
 	var id int
-	err = stmt.QueryRow(bet.Type, bet.Title, bet.DateBet, bet.LimitDate, bet.QtVictory, bet.QtLoss, bet.Status, bet.UserID).Scan(&id)
+	err = stmt.QueryRow(bet.Type, bet.Title, bet.DateBet, bet.LimitDate, bet.QtVictory,
+		bet.QtLoss, bet.Status, bet.UserID, bet.Created).Scan(&id)
 	if err != nil {
 		return 0, err
 	}
@@ -114,7 +120,8 @@ func (r *postgresBetRepository) GetBetsByUserID(ctx context.Context, userID int6
 
 	// Define the SQL query with placeholders for user ID and status
 	query := `
-        SELECT b.id, b.type, b.limit_date, b.qt_victory, b.qt_loss, b.status, b.user_id, u.username
+        SELECT b.id, b.title, b.type, b.date_bet, b.limit_date, b.qt_victory, 
+               b.qt_loss, b.status, b.user_id, u.username, b.created
 		FROM bets b
 		INNER JOIN users AS u ON b.user_id = u.id
         WHERE b.user_id = $1
@@ -140,13 +147,16 @@ func (r *postgresBetRepository) GetBetsByUserID(ctx context.Context, userID int6
 		var activeBet utility.ActiveBet
 		if err := rows.Scan(
 			&activeBet.ID,
+			&activeBet.Title,
 			&activeBet.Type,
+			&activeBet.BetDay,
 			&activeBet.LimitDate,
 			&activeBet.QtVictory,
 			&activeBet.QtLoss,
 			&activeBet.Status,
 			&activeBet.UserID,
-			&activeBet.Username); err != nil {
+			&activeBet.Username,
+			&activeBet.Created); err != nil {
 			return nil, err
 		}
 		activeBets = append(activeBets, activeBet)
@@ -158,13 +168,39 @@ func (r *postgresBetRepository) GetBetsByUserID(ctx context.Context, userID int6
 	return activeBets, nil
 }
 
+func (r *postgresBetRepository) GetBetsNbForUser(ctx context.Context, userID int64) (int, error) {
+	// Get the current date
+	currentDate := time.Now().Format("2006-01-02")
+
+	// Define the SQL query with placeholders for user ID and status
+	query := `
+        SELECT COUNT(*) FROM bets WHERE user_id = $1 AND DATE(created) = $2
+    `
+
+	// Prepare the query
+	stmt, err := r.db.PrepareContext(ctx, query)
+	if err != nil {
+		return 0, err
+	}
+	defer stmt.Close()
+
+	// Execute the query with status values
+	var count int
+	err = stmt.QueryRowContext(ctx, userID, currentDate).Scan(&count)
+	if err != nil {
+		return 0, err
+	}
+
+	return count, nil
+}
+
 func (r *postgresBetRepository) GetTicketsByUserID(ctx context.Context, userID int64) ([]utility.Ticket, error) {
 
 	// Define the SQL query with placeholders for user ID and status
 	query := `
         SELECT t.id, t.user_id, t.bet_id, t.bid, t.value, t.status, 
-               b.id, b.type, b.limit_date, b.qt_victory, b.qt_loss, 
-               b.status, b.user_id, u.username
+               b.id, b.title, b.type, b.date_bet, b.limit_date, b.qt_victory, 
+               b.qt_loss, b.status, b.user_id, u.username, b.created
 		FROM tickets t
 		INNER JOIN bets AS b ON t.bet_id = b.id 
 		INNER JOIN users AS u ON t.user_id = u.id
@@ -198,13 +234,16 @@ func (r *postgresBetRepository) GetTicketsByUserID(ctx context.Context, userID i
 			&ticket.Value,
 			&ticket.Status,
 			&activeBet.ID,
+			&activeBet.Title,
 			&activeBet.Type,
+			&activeBet.BetDay,
 			&activeBet.LimitDate,
 			&activeBet.QtVictory,
 			&activeBet.QtLoss,
 			&activeBet.Status,
 			&activeBet.UserID,
 			&activeBet.Username,
+			&activeBet.Created,
 		); err != nil {
 			return nil, err
 		}
@@ -235,10 +274,11 @@ func (r *postgresBetRepository) GetActiveBets(ctx context.Context) ([]utility.Ac
 
 	// Define the SQL query with placeholders for user ID and status
 	query := `
-        SELECT b.id, b.type, b.limit_date, b.qt_victory, b.qt_loss, b.status, b.user_id, u.username
+        SELECT b.id, b.title, b.type, b.date_bet, b.limit_date, b.qt_victory, 
+               b.qt_loss, b.status, b.user_id, u.username, b.created
         FROM bets AS b
         INNER JOIN users AS u ON b.user_id = u.id
-        WHERE b.status IN ($1, $2)
+        WHERE b.status IN ($1, $2) AND CURRENT_TIMESTAMP < b.limit_date
     `
 
 	// Prepare the query
@@ -259,7 +299,19 @@ func (r *postgresBetRepository) GetActiveBets(ctx context.Context) ([]utility.Ac
 	var activeBets []utility.ActiveBet
 	for rows.Next() {
 		var activeBet utility.ActiveBet
-		if err := rows.Scan(&activeBet.ID, &activeBet.Type, &activeBet.LimitDate, &activeBet.QtVictory, &activeBet.QtLoss, &activeBet.Status, &activeBet.UserID, &activeBet.Username); err != nil {
+		if err := rows.Scan(
+			&activeBet.ID,
+			&activeBet.Title,
+			&activeBet.Type,
+			&activeBet.BetDay,
+			&activeBet.LimitDate,
+			&activeBet.QtVictory,
+			&activeBet.QtLoss,
+			&activeBet.Status,
+			&activeBet.UserID,
+			&activeBet.Username,
+			&activeBet.Created,
+		); err != nil {
 			return nil, err
 		}
 		activeBets = append(activeBets, activeBet)
@@ -276,7 +328,7 @@ func (r *postgresBetRepository) GetBetByID(ctx context.Context, betID int) (util
 	var selectedBet utility.SelectedBet
 
 	query := `
-		SELECT b.id, b.title, b.type, b.limit_date, b.qt_victory, b.qt_loss, b.status, b.user_id, u.username
+		SELECT b.id, b.title, b.type, b.date_bet, b.limit_date, b.qt_victory, b.qt_loss, b.status, b.user_id, u.username
 		FROM bets b
 		INNER JOIN users AS u ON b.user_id = u.id
 		WHERE b.id = $1
@@ -304,6 +356,7 @@ func (r *postgresBetRepository) GetBetByID(ctx context.Context, betID int) (util
 		&selectedBet.ID,
 		&selectedBet.Title,
 		&selectedBet.Type,
+		&selectedBet.BetDay,
 		&selectedBet.LimitDate,
 		&selectedBet.QtVictory,
 		&selectedBet.QtLoss,

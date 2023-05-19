@@ -101,7 +101,9 @@ class Login extends Component {
                                 Submit
                             </button>
                         </div>
-
+                        <p className="forgot-password text-right">
+                            Don't have account? <a href="/register">Register</a>
+                        </p>
                     </form>
                 </div>
             </div>

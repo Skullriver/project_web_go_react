@@ -39,11 +39,11 @@ function TakeBetModal(args) {
 
     const [responseModal, setResponseModal] = useState(false);
     const [messageModal, setMessageModal] = useState('');
-    const toggleResponseModal = () => setResponseModal(!responseModal);
+    const toggleResponseModal = () => {setResponseModal(!responseModal);window.location.reload()};
 
     const [alert, setAlert] = useState(false);
     const [alertMessage, setAlertMessage] = useState('');
-    const onDismiss = () => setAlert(!alert);
+    const onDismiss = () => {setAlert(!alert); window.location.reload()};
 
     const toggle = () => setModal(!modal);
 
@@ -134,6 +134,10 @@ function TakeBetModal(args) {
 
     const maxAmount = args.user.balance ? args.user.balance : 10000;
 
+    const options = {
+        timeZone: 'UTC'
+    };
+
     return (
         <div>
             <Button onClick={() => handleBetClick(args.bet_id)}>
@@ -156,8 +160,12 @@ function TakeBetModal(args) {
                                 <p>{selectedBet.type === 1 ? 'Proportion de lignes où il y aura un problème' : selectedBet.type === 2 ? 'La présence de problèmes sur une ligne' : selectedBet.type === 3 ? 'Le nombre total d\'incidents pour cette journée' : 'Error'}</p>
                             </FormGroup>
                             <FormGroup>
+                                <Label for="startDay">Jour de pari</Label>
+                                <p>{new Date(selectedBet.bet_date).toLocaleDateString("fr", options)} </p>
+                            </FormGroup>
+                            <FormGroup>
                                 <Label for="startDay">Date limite pour parier</Label>
-                                <p>{new Date(selectedBet.limit_date).toLocaleString()} </p>
+                                <p>{new Date(selectedBet.limit_date).toLocaleString("fr", options)} </p>
                             </FormGroup>
                         </div>
                         <div className="tb-form-block-2">
@@ -283,7 +291,7 @@ function TakeBetModal(args) {
                 </ModalHeader>
                 <ModalBody>
                     {messageModal}
-                    You can see your tickets here -> { /*TODO add page for tickets*/ }
+                    <p>You can see your tickets <a href="/user">here</a></p>
                 </ModalBody>
             </Modal>
         </div>
