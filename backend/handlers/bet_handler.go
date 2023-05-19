@@ -360,30 +360,3 @@ func (h *BetHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Print the response body
 	json.NewEncoder(w).Encode(resp)
 }
-
-func (h *BetHandler) CheckBetHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-	w.Header().Set("Access-Control-Allow-Methods", "GET")
-	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
-
-	// Check request method
-	if r.Method == "OPTIONS" {
-		w.WriteHeader(http.StatusOK)
-		return
-	}
-	// Create a new context with a timeout of 5 seconds
-	timeString := os.Getenv("CONTEXT_TIME")
-	timeValue, err := strconv.Atoi(timeString)
-
-	if err != nil {
-		// Handle error
-		panic(err)
-	}
-
-	contextTime := time.Duration(timeValue) * time.Second
-	ctx, cancel := context.WithTimeout(context.Background(), contextTime)
-	defer cancel()
-
-	h.api.CheckBet(ctx)
-
-}

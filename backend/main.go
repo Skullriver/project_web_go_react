@@ -59,7 +59,6 @@ func setupRoutes(db *sql.DB) *mux.Router {
 	r.HandleFunc("/api/user", betHandler.GetUserHandler).Methods("GET", "OPTIONS")
 	r.HandleFunc("/api/bets/{betId}", betHandler.GetBetHandler).Methods("GET", "OPTIONS")
 	r.HandleFunc("/api/bets/takeBet", betHandler.TakeBetHandler).Methods("POST", "OPTIONS")
-	r.HandleFunc("/api/checkBet", betHandler.CheckBetHandler).Methods("GET", "OPTIONS")
 
 	return r
 }
