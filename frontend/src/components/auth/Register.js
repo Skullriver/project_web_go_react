@@ -2,9 +2,10 @@ import React, {Component, useEffect} from "react";
 import axios from 'axios';
 import '../../styles/auth.css';
 import {useNavigate} from "react-router-dom";
-import {Alert, UncontrolledAlert} from "reactstrap";
+import {Alert} from "reactstrap";
 
-let endpoint = "http://localhost:8080/user/register"
+import { API_BASE_URL } from '../../config';
+let endpoint = `${API_BASE_URL}:8080/user/register`
 
 const withNavigate = (Component) => {
     return function WrappedComponent(props) {
@@ -74,33 +75,33 @@ class Register extends Component {
             <div className="auth-wrapper">
                 <div className="auth-inner">
                     <form onSubmit={this.handleSubmit}>
-                        <h3>Sign Up</h3>
+                        <h3>S'inscrire</h3>
                         <div className="mb-3">
                             <label>Username</label>
                             <input
                                 type="text"
                                 className="form-control"
-                                placeholder="Enter username"
+                                placeholder="Entrez username"
                                 value={this.state.username}
                                 onChange={this.handleUsernameChange}
                             />
                         </div>
                         <div className="mb-3">
-                            <label>Email address</label>
+                            <label>Adresse e-mail</label>
                             <input
                                 type="email"
                                 className="form-control"
-                                placeholder="Enter email"
+                                placeholder="Entrez votre e-mail"
                                 value={this.state.email}
                                 onChange={this.handleEmailChange}
                             />
                         </div>
                         <div className="mb-3">
-                            <label>Password</label>
+                            <label>Mot de passe</label>
                             <input
                                 type="password"
                                 className="form-control"
-                                placeholder="Enter password"
+                                placeholder="Entrez votre mot de passe"
                                 value={this.state.password}
                                 onChange={this.handlePasswordChange}
                             />
@@ -110,11 +111,11 @@ class Register extends Component {
                         </Alert>
                         <div className="d-grid">
                             <button type="submit" className="btn btn-primary">
-                                Submit
+                                Se connecter
                             </button>
                         </div>
                         <p className="forgot-password text-right">
-                            Already have account? <a href="/login">Login</a>
+                            Vous avez déjà un compte? <a href="/login">S'identifier</a>
                         </p>
                     </form>
                 </div>

@@ -6,8 +6,9 @@ import {fr} from "date-fns/locale";
 import {isSameDay} from "date-fns";
 import axios from "axios";
 
-let endpointGet = "http://localhost:8080/api/betCreationInfo"
-let endpointPost = "http://localhost:8080/api/createBet"
+import { API_BASE_URL } from '../../config';
+let endpointGet = `${API_BASE_URL}:8080/bet/creationInfo/get`
+let endpointPost = `${API_BASE_URL}:8080/bet/create`
 
 function CreationModal(args) {
 
@@ -28,7 +29,7 @@ function CreationModal(args) {
                 setAlertMessage(error.response.data)
                 setAlert(true)
             });
-    }, []);
+    }, [authToken]);
 
     let initialStartDay = new Date(new Date().setDate(new Date().getDate() + 1));
 
@@ -170,7 +171,7 @@ function CreationModal(args) {
     return (
         <div>
             <Button onClick={toggle} color="primary">
-                Create
+                Créer
             </Button>
             <Modal isOpen={modal} toggle={toggle} backdrop="static" size="lg" {...args}>
                 <Form onSubmit={handleSubmit}>
@@ -377,7 +378,7 @@ function CreationModal(args) {
 
                             <div className="form-qt-block">
                                 <FormGroup>
-                                    <Label for="qtDefeat">Taux de défaite</Label>
+                                    <Label for="qtDefeat">Taux de non réalisation</Label>
                                     <Input
                                         type="number"
                                         step="0.1"
@@ -391,7 +392,7 @@ function CreationModal(args) {
                                     />
                                 </FormGroup>
                                 <FormGroup>
-                                    <Label for="qtVictory">Taux de réussite</Label>
+                                    <Label for="qtVictory">Taux de réalisation</Label>
                                     <Input
                                         type="number"
                                         step="0.1"

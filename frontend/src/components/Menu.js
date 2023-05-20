@@ -1,5 +1,5 @@
 import {Component} from "react";
-import {BrowserRouter as Router, Link, Route, Routes, useNavigate} from "react-router-dom";
+import {BrowserRouter as Router, Link, Route, Routes} from "react-router-dom";
 import {RxExit} from "react-icons/rx";
 import Login from "./auth/Login";
 import TrafficPage from "./traffic/TrafficPage";
@@ -23,10 +23,10 @@ class Menu extends Component {
                         <div className="container">
                             <div className="links">
                                 <Link className="navbar-brand" to={'/'}>
-                                    Welcome
+                                    Parier sur la pertubation
                                 </Link>
                                 <Link className="nav-link" to={'/traffic'}>
-                                    Traffic status
+                                    État du trafic
                                 </Link>
                             </div>
                             <div><a href="#" onClick={this.handleExit}><RxExit/></a></div>

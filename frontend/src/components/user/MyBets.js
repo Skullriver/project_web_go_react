@@ -2,14 +2,13 @@ import React, {Component} from "react";
 import withAuth from "../auth/CheckAuth";
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
-import CreationModal from "../bets/CreationModal";
-import {FormGroup, Input, Label, Modal, ModalBody, ModalHeader, Table} from "reactstrap";
+import {Badge, FormGroup, Input, Label, Modal, ModalBody, ModalHeader, Table} from "reactstrap";
 import '../../styles/mybets.css';
-import TakeBetModal from "../bets/TakeBetModal";
 import UserHeader from "./UserHeader";
 
-let endpointUser = "http://localhost:8080/api/user"
-let endpointGet = "http://localhost:8080/api/bets/"
+import { API_BASE_URL } from '../../config';
+let endpointUser = `${API_BASE_URL}:8080/user/get`
+let endpointGet = `${API_BASE_URL}:8080/bet/`
 
 const withNavigate = (Component) => {
     return function WrappedComponent(props) {
@@ -125,7 +124,7 @@ class MyBets extends Component {
                 <UserHeader/>
                 <div className="my-bets">
                     <div>
-                        <span>Created:</span>
+                        <span>Créé:</span>
                         <Table
                             hover
                             responsive
@@ -133,36 +132,41 @@ class MyBets extends Component {
                         >
                             <thead>
                             <tr>
-                                <th>
+                                <td>
                                     #
-                                </th>
-                                <th>
-                                    Day of pari
-                                </th>
-                                <th>
+                                </td>
+                                <td>
+                                    Jour de pari
+                                </td>
+                                <td>
                                     Type de pari
-                                </th>
-                                <th>
-                                    Status
-                                </th>
+                                </td>
+                                <td>
+                                    Statut
+                                </td>
                             </tr>
                             </thead>
                             <tbody>
                             {
-                                this.state.user.created_bets.map(bet => (
+                                this.state.user.created_bets.map(bet => {
+                                    let color = bet.status === "created" ? "secondary"
+                                        : bet.status === "opened" ? "primary"
+                                            : bet.status === "expired" ? "warning"
+                                                : bet.status === "finished" ? "info" : "";
+                                return(
                                     <tr key={bet.id} onClick={() => this.handleRowClick(bet.id)}>
                                         <th scope="row"> {bet.id}</th>
                                         <td> {new Date(bet.bet_date).toLocaleDateString("fr", options)} </td>
                                         <td> {bet.type === 1 ? 'Proportion de lignes où il y aura un problème' : bet.type === 2 ? 'La présence de problèmes sur une ligne' : 'Le nombre total d\'incidents pour cette journée'} </td>
-                                        <td> {bet.status}</td>
+                                        <td> <Badge color={color}>{bet.status} </Badge> </td>
                                     </tr>
-                                ))
+                                )})
                             }
                             </tbody>
                         </Table>
                     </div>
                     <div>
-                        <span>Participated:</span>
+                        <span>Participé:</span>
                         <Table
                             hover
                             responsive
@@ -170,34 +174,39 @@ class MyBets extends Component {
                         >
                             <thead>
                             <tr>
-                                <th>
+                                <td>
                                     #
-                                </th>
-                                <th>
-                                    Day of pari
-                                </th>
-                                <th>
+                                </td>
+                                <td>
+                                    Jour de pari
+                                </td>
+                                <td>
                                     Type de pari
-                                </th>
-                                <th>
-                                    Possible win
-                                </th>
-                                <th>
-                                    Status
-                                </th>
+                                </td>
+                                <td>
+                                    Gain possible
+                                </td>
+                                <td>
+                                    Statut
+                                </td>
                             </tr>
                             </thead>
                             <tbody>
                             {
-                                this.state.user.taken_bets.map(bet => (
+                                this.state.user.taken_bets.map(bet => {
+                                    let color = bet.status === "canceled" ? "secondary"
+                                        : bet.status === "opened" ? "primary"
+                                            : bet.status === "win" ? "success"
+                                                : bet.status === "lost" ? "danger" : "";
+                                    return (
                                     <tr key={bet.id} onClick={() => this.handleTicketClick(bet.bet.id, bet)}>
                                         <th scope="row"> {bet.bet.id}</th>
                                         <td> {new Date(bet.bet.bet_date).toLocaleDateString("fr", options)}</td>
-                                        <td> {bet.bet.type === 1 ? 'Proportion de lignes où il y aura un problème' : bet.type === 2 ? 'La présence de problèmes sur une ligne' : 'Le nombre total d\'incidents pour cette journée'} </td>
+                                        <td> {bet.bet.type === 1 ? 'Proportion de lignes où il y aura un problème' : bet.bet.type === 2 ? 'La présence de problèmes sur une ligne' : 'Le nombre total d\'incidents pour cette journée'} </td>
                                         <td> {bet.bid ? bet.value * bet.bet.qt_victory : bet.value * bet.bet.qt_loss }</td>
-                                        <td> {bet.status}</td>
+                                        <td> <Badge color={color}>{bet.status}</Badge></td>
                                     </tr>
-                                ))
+                                )})
                             }
                             </tbody>
                         </Table>
@@ -211,7 +220,7 @@ class MyBets extends Component {
                                 <div>
                                     <b>#{this.state.selectedBet.id}</b> {this.state.selectedBet.title}
                                 </div>
-                                <span>Created by: @{this.state.selectedBet.creator_username}#{this.state.selectedBet.creator_id}</span>
+                                <span>Créé par: {this.state.selectedBet.creator_username}#{this.state.selectedBet.creator_id}</span>
                             </div>
                             )}
                         </ModalHeader>
@@ -280,11 +289,11 @@ class MyBets extends Component {
                             {this.state.selectedBet && (
                                 <div className="tb-form-qt-block">
                                     <FormGroup>
-                                        <Label className="tb-qtDefeat" for="qtDefeat">Taux de défaite</Label>
+                                        <Label className="tb-qtDefeat" for="qtDefeat">Taux de non réalisation</Label>
                                         <p>{this.state.selectedBet.qt_loss}</p>
                                     </FormGroup>
                                     <FormGroup>
-                                        <Label className="tb-qtVictory" for="qtVictory">Taux de réussite</Label>
+                                        <Label className="tb-qtVictory" for="qtVictory">Taux de réalisation</Label>
                                         <p>{this.state.selectedBet.qt_victory}</p>
                                     </FormGroup>
                                 </div>
@@ -299,7 +308,7 @@ class MyBets extends Component {
                                     <div>
                                         <b>#{this.state.selectedTicketBet.id}</b> {this.state.selectedTicketBet.title}
                                     </div>
-                                    <span>Created by: @{this.state.selectedTicketBet.creator_username}#{this.state.selectedTicketBet.creator_id}</span>
+                                    <span>Créé par: {this.state.selectedTicketBet.creator_username}#{this.state.selectedTicketBet.creator_id}</span>
                                 </div>
                             )}
                         </ModalHeader>
@@ -368,28 +377,28 @@ class MyBets extends Component {
                             {this.state.selectedTicketBet && (
                                 <div className="tb-form-qt-block">
                                     <FormGroup>
-                                        <Label className="tb-qtDefeat" for="qtDefeat">Taux de défaite</Label>
+                                        <Label className="tb-qtDefeat" for="qtDefeat">Taux de non réalisation</Label>
                                         <p>{this.state.selectedTicketBet.qt_loss}</p>
                                     </FormGroup>
                                     <FormGroup>
-                                        <Label className="tb-qtVictory" for="qtVictory">Taux de réussite</Label>
+                                        <Label className="tb-qtVictory" for="qtVictory">Taux de réalisation</Label>
                                         <p>{this.state.selectedTicketBet.qt_victory}</p>
                                     </FormGroup>
                                     <FormGroup>
-                                        <Label for="qtVictory">Result of pari</Label>
+                                        <Label for="qtVictory">Résultat du pari</Label>
                                         <div className="tb-form-bet-result">
                                             <div>
                                                 <label>
                                                     <input type="radio" name="bid" checked={this.state.selectedTicket.bid === true} value="oui"
                                                            readOnly={true}/>
-                                                    Oui
+                                                    Réalisation
                                                 </label>
                                             </div>
                                             <div>
                                                 <label>
                                                     <input type="radio" name="bid" checked={this.state.selectedTicket.bid === false} value="non"
                                                            readOnly={true}/>
-                                                    Non
+                                                    Non réalisation
                                                 </label>
                                             </div>
 
@@ -400,7 +409,7 @@ class MyBets extends Component {
                             {this.state.selectedTicket && (
                             <div className="tb-footer">
                                 <FormGroup className="tb-amount">
-                                    <Label for="bet_value">Amount for pari</Label>
+                                    <Label for="bet_value">Montant pour pari</Label>
                                     <Input
                                         readOnly={true}
                                         value={this.state.selectedTicket.value}

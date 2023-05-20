@@ -7,10 +7,6 @@ import {ImWarning} from "react-icons/im";
 
 class TrafficList extends Component {
 
-    // constructor(props) {
-    //     super(props);
-    // }
-
     RoundIcon(backgroundColor, textColor, children) {
         const iconStyle = {
             backgroundColor: backgroundColor,

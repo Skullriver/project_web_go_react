@@ -5,7 +5,8 @@ import {useNavigate} from "react-router-dom";
 import {Alert} from "reactstrap";
 import withAuth from "./CheckAuth";
 
-let endpoint = "http://localhost:8080/user/login"
+import { API_BASE_URL } from '../../config';
+let endpoint = `${API_BASE_URL}:8080/user/login`
 
 const withNavigate = (Component) => {
     return function WrappedComponent(props) {
@@ -18,7 +19,7 @@ const withNavigate = (Component) => {
             if (isAuthenticated) {
                 navigate('/'); // Redirect to the desired page for authenticated users
             }
-        }, [navigate]);
+        }, [navigate, isAuthenticated]);
 
         return <Component navigate={navigate} {...props} />;
     }
@@ -72,23 +73,23 @@ class Login extends Component {
             <div className="auth-wrapper">
                 <div className="auth-inner">
                     <form onSubmit={this.handleSubmit}>
-                        <h3>Sign In</h3>
+                        <h3>S'identifier</h3>
                         <div className="mb-3">
-                            <label>Email address</label>
+                            <label>Adresse e-mail</label>
                             <input
                                 type="email"
                                 className="form-control"
-                                placeholder="Enter email"
+                                placeholder="Entrez votre e-mail"
                                 value={this.state.email}
                                 onChange={this.handleEmailChange}
                             />
                         </div>
                         <div className="mb-3">
-                            <label>Password</label>
+                            <label>Mot de passe</label>
                             <input
                                 type="password"
                                 className="form-control"
-                                placeholder="Enter password"
+                                placeholder="Entrez votre mot de passe"
                                 value={this.state.password}
                                 onChange={this.handlePasswordChange}
                             />
@@ -98,11 +99,11 @@ class Login extends Component {
                         </Alert>
                         <div className="d-grid">
                             <button type="submit" className="btn btn-primary">
-                                Submit
+                                Se connecter
                             </button>
                         </div>
                         <p className="forgot-password text-right">
-                            Don't have account? <a href="/register">Register</a>
+                            Vous n'avez pas de compte? <a href="/register">S'inscrire</a>
                         </p>
                     </form>
                 </div>

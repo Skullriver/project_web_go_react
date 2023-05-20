@@ -52,13 +52,13 @@ func setupRoutes(db *sql.DB) *mux.Router {
 
 	r.HandleFunc("/user/register", authHandler.RegisterHandler).Methods("POST", "OPTIONS")
 	r.HandleFunc("/user/login", authHandler.LoginHandler).Methods("POST", "OPTIONS")
-	r.HandleFunc("/api/traffic", trafficHandler.TrafficHandler).Methods("GET", "OPTIONS")
-	r.HandleFunc("/api/betCreationInfo", betHandler.InfoBetHandler).Methods("GET", "OPTIONS")
-	r.HandleFunc("/api/createBet", betHandler.CreateBetHandler).Methods("POST", "OPTIONS")
-	r.HandleFunc("/api/getActiveBets", betHandler.GetActiveBetsHandler).Methods("GET", "OPTIONS")
-	r.HandleFunc("/api/user", betHandler.GetUserHandler).Methods("GET", "OPTIONS")
-	r.HandleFunc("/api/bets/{betId}", betHandler.GetBetHandler).Methods("GET", "OPTIONS")
-	r.HandleFunc("/api/bets/takeBet", betHandler.TakeBetHandler).Methods("POST", "OPTIONS")
+	r.HandleFunc("/traffic/get", trafficHandler.TrafficHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc("/bet/creationInfo/get", betHandler.InfoBetHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc("/bet/create", betHandler.CreateBetHandler).Methods("POST", "OPTIONS")
+	r.HandleFunc("/bet/active/get", betHandler.GetActiveBetsHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc("/user/get", betHandler.GetUserHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc("/bet/{betId}", betHandler.GetBetHandler).Methods("GET", "OPTIONS")
+	r.HandleFunc("/bet/take", betHandler.TakeBetHandler).Methods("POST", "OPTIONS")
 
 	return r
 }

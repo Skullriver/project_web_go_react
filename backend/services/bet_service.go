@@ -292,7 +292,15 @@ func (s *BetService) GetBetByID(ctx context.Context, betID int) (utility.Selecte
 
 	bet, err := s.BetRepository.GetBetByID(ctx, betID)
 	if err != nil {
-		return utility.SelectedBet{}, nil
+		return utility.SelectedBet{}, err
+	}
+	if bet.Line != "" {
+		line, err := s.LineRepository.GetLineByLineID(ctx, bet.Line)
+		if err != nil {
+			return utility.SelectedBet{}, err
+		}
+
+		bet.Line = "Ligne " + line.Code
 	}
 
 	return bet, nil

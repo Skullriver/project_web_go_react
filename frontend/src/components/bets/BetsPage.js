@@ -1,10 +1,14 @@
 import {Component} from "react";
 import axios from "axios";
-import {Col, Container, Row, Spinner, Table} from "reactstrap";
+import {Badge, Col, Container, Row, Spinner, Table} from "reactstrap";
 import withAuth from "../auth/CheckAuth";
 import {useNavigate} from "react-router-dom";
 import TakeBetModal from "./TakeBetModal";
 import UserHeader from "../user/UserHeader";
+import {API_BASE_URL} from '../../config';
+
+let endpoint = `${API_BASE_URL}:8080/bet/active/get`
+let endpointUser = `${API_BASE_URL}:8080/user/get`
 
 const withNavigate = (Component) => {
     return function WrappedComponent(props) {
@@ -13,9 +17,6 @@ const withNavigate = (Component) => {
         return isAuthenticated ? <Component navigate={navigate} {...props} /> : null;
     }
 };
-
-let endpoint = "http://localhost:8080/api/getActiveBets"
-let endpointUser = "http://localhost:8080/api/user"
 
 class BetsPage extends Component {
 
@@ -27,7 +28,6 @@ class BetsPage extends Component {
             userBetsIds: []
         };
     }
-
 
     componentDidMount() {
         this.resetState();
@@ -82,90 +82,95 @@ class BetsPage extends Component {
                     })
                 })
             })
-                .catch(error => {
-                        console.log(error.response.data)
-                        // setAlertMessage(error.response.data)
-                        // setAlert(true)
-                    })
+            .catch(error => {
+                console.log(error.response.data)
+                // setAlertMessage(error.response.data)
+                // setAlert(true)
+            })
 
-                };
+    };
 
 
-                render()
-                {
-                    const options = {
-                        timeZone: 'UTC'
-                    };
-                    return (
-                        <div className="main-container">
-                            <UserHeader/>
-                            <Container fluid style={{marginTop: "15px", padding: "0 50px"}}>
-                                <Row>
-                                    <Col>
-                                        <div>
-                                            {!this.state.betsList || this.state.betsList.length <= 0 ? (
-                                                <Spinner color="secondary" size="sm">
-                                                    Loading...
-                                                </Spinner>
-                                            ) : (
-                                                <Table responsive>
-                                                    <thead>
-                                                    <tr>
-                                                        <th>
-                                                            #
-                                                        </th>
-                                                        <th>
-                                                            Date limite
-                                                        </th>
-                                                        <th>
-                                                            Type de pari
-                                                        </th>
-                                                        <th>
-                                                            Taux de réussite
-                                                        </th>
-                                                        <th>
-                                                            Taux de défaite
-                                                        </th>
-                                                        <th>
-                                                            Auteur
-                                                        </th>
-                                                        <th>
-                                                            Status
-                                                        </th>
-                                                        <th>
+    render() {
+        const options = {
+            timeZone: 'UTC'
+        };
+        return (
+            <div className="main-container">
+                <UserHeader/>
+                <Container fluid style={{marginTop: "15px", padding: "0 50px"}}>
+                    <Row>
+                        <Col>
+                            <div>
+                                {!this.state.betsList || this.state.betsList.length <= 0 ? (
+                                    <Spinner color="secondary" size="sm">
+                                        Loading...
+                                    </Spinner>
+                                ) : (
+                                    <Table responsive>
+                                        <thead>
+                                        <tr>
+                                            <th>
+                                                #
+                                            </th>
+                                            <th>
+                                                Date limite
+                                            </th>
+                                            <th>
+                                                Type de pari
+                                            </th>
+                                            <th>
+                                                Taux de réalisation
+                                            </th>
+                                            <th>
+                                                Taux de non réalisation
+                                            </th>
+                                            <th>
+                                                Auteur
+                                            </th>
+                                            <th>
+                                                Statut
+                                            </th>
+                                            <th>
 
-                                                        </th>
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        {
+
+                                            this.state.betsList.map(bet => {
+                                                let color = bet.status === "created" ? "secondary" : bet.status === "opened" ? "primary" : "";
+                                                return (
+                                                    <tr key={bet.id}>
+                                                        <th scope="row"> {bet.id}</th>
+                                                        <td> {new Date(bet.limit_date).toLocaleString("fr", options)} </td>
+                                                        <td> {bet.type === 1 ? 'Proportion de lignes où il y aura un problème' : bet.type === 2 ? 'La présence de problèmes sur une ligne' : 'Le nombre total d\'incidents pour cette journée'} </td>
+                                                        <td> {bet.qt_victory} </td>
+                                                        <td> {bet.qt_loss} </td>
+                                                        <td> {bet.username}#{bet.user_id} </td>
+                                                        <td>
+                                                            <Badge color={color}>{bet.status}</Badge>
+                                                        </td>
+                                                        <td>{this.state.userBetsIds.includes(bet.id) ? "deja parié" :
+                                                            <TakeBetModal user={this.state.user}
+                                                                          bet_id={bet.id}/>}</td>
                                                     </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    {
+                                                );
+                                            })
+                                        }
+                                        </tbody>
+                                    </Table>
+                                )
+                                }
+                            </div>
 
-                                                        this.state.betsList.map(bet => (
-                                                            <tr key={bet.id}>
-                                                                <th scope="row"> {bet.id}</th>
-                                                                <td> {new Date(bet.limit_date).toLocaleString("fr", options) } </td>
-                                                                <td> {bet.type === 1 ? 'Proportion de lignes où il y aura un problème' : bet.type === 2 ? 'La présence de problèmes sur une ligne' : 'Le nombre total d\'incidents pour cette journée'} </td>
-                                                                <td> {bet.qt_victory} </td>
-                                                                <td> {bet.qt_loss} </td>
-                                                                <td> @{bet.username}#{bet.user_id} </td>
-                                                                <td> {bet.status}</td>
-                                                                <td>{this.state.userBetsIds.includes(bet.id) ? "deja parié" :  <TakeBetModal user={this.state.user}
-                                                                                  bet_id={bet.id}/>}</td>
-                                                            </tr>
-                                                        ))
-                                                    }
-                                                    </tbody>
-                                                </Table>
-                                            )
-                                            }
-                                        </div>
+                        </Col>
+                    </Row>
+                </Container>
+            </div>
+        );
+    }
+}
 
-                                    </Col>
-                                </Row>
-                            </Container>
-                        </div>
-                    );
-                }
-            }
-
-        export default withAuth(withNavigate(BetsPage));
+export default withAuth(withNavigate(BetsPage));

@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
-import {Alert, Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
+import {Button, Form, FormGroup, Input, Label, Modal, ModalBody, ModalFooter, ModalHeader} from 'reactstrap';
 import '../../styles/takeBet.css';
 import axios from "axios";
 
-let endpointGet = "http://localhost:8080/api/bets/"
-let endpointPost = "http://localhost:8080/api/bets/takeBet"
+import { API_BASE_URL } from '../../config';
+let endpointGet = `${API_BASE_URL}:8080/bet/`
+let endpointPost = `${API_BASE_URL}:8080/bet/take`
 
 function TakeBetModal(args) {
 
@@ -47,7 +48,7 @@ function TakeBetModal(args) {
 
     const toggle = () => setModal(!modal);
 
-    const [winText, setWinText] = useState("The possible win is 0");
+    const [winText, setWinText] = useState("Le gain possible est 0");
 
     const handleInputChange = (event) => {
         const {name, value} = event.target;
@@ -57,11 +58,11 @@ function TakeBetModal(args) {
 
             if (value === "oui") {
                 let win = Math.round(selectedBet.qt_victory * formData.bet_value);
-                setWinText("The possible win is " + win);
+                setWinText("Le gain possible est " + win);
             }
             if (value === "non") {
                 let win = Math.round(selectedBet.qt_loss * formData.bet_value);
-                setWinText("The possible win is " + win);
+                setWinText("Le gain possible est " + win);
             }
 
             setFormData({...formData, [name]: value});
@@ -70,16 +71,16 @@ function TakeBetModal(args) {
         if (name === "bet_value") {
 
             if( value === ""){
-                setWinText("The possible win is " + 0);
+                setWinText("Le gain possible est " + 0);
             }
 
             if (formData.bid === "oui") {
                 let win = Math.round(selectedBet.qt_victory * value);
-                setWinText("The possible win is " + win);
+                setWinText("Le gain possible est " + win);
             }
             if (formData.bid === "non") {
                 let win = Math.round(selectedBet.qt_loss * value);
-                setWinText("The possible win is " + win);
+                setWinText("Le gain possible est " + win);
             }
 
             setFormData({...formData, [name]: value});
@@ -91,12 +92,12 @@ function TakeBetModal(args) {
 
 
         if(formData.bet_id === '' || formData.bid === '' || formData.bet_value === ''){
-            setAlertMessage("Empty form fields")
+            setAlertMessage("Champs de form vides")
             setAlert(true)
         }else{
 
             if(new Date(selectedBet.limit_date) < new Date()){
-                setAlertMessage("Limit date expired")
+                setAlertMessage("Date limite expirée")
                 setAlert(true)
             }else{
                 sendPost();
@@ -150,7 +151,7 @@ function TakeBetModal(args) {
                             <div>
                                 <b>#{selectedBet.id}</b> {selectedBet.title}
                             </div>
-                            <span>Created by: @{selectedBet.creator_username}#{selectedBet.creator_id}</span>
+                            <span>Créé par: {selectedBet.creator_username}#{selectedBet.creator_id}</span>
                         </div>
                     </ModalHeader>
                     <ModalBody>
@@ -213,28 +214,28 @@ function TakeBetModal(args) {
                         </div>
                         <div className="tb-form-qt-block">
                             <FormGroup>
-                                <Label className="tb-qtDefeat" for="qtDefeat">Taux de défaite</Label>
+                                <Label className="tb-qtDefeat" for="qtDefeat">Taux de non réalisation</Label>
                                 <p>{selectedBet.qt_loss}</p>
                             </FormGroup>
                             <FormGroup>
-                                <Label className="tb-qtVictory" for="qtVictory">Taux de réussite</Label>
+                                <Label className="tb-qtVictory" for="qtVictory">Taux de réalisation</Label>
                                 <p>{selectedBet.qt_victory}</p>
                             </FormGroup>
                             <FormGroup>
-                                <Label for="qtVictory">Result of pari</Label>
+                                <Label for="qtVictory">Résultat du pari</Label>
                                 <div className="tb-form-bet-result">
                                     <div>
                                         <label>
                                             <input type="radio" name="bid" checked={formData.bid === "oui"} value="oui"
                                                    onChange={handleInputChange} required/>
-                                            Oui
+                                            Réalisation
                                         </label>
                                     </div>
                                     <div>
                                         <label>
                                             <input type="radio" name="bid" checked={formData.bid === "non"} value="non"
                                                    onChange={handleInputChange}/>
-                                            Non
+                                            Non réalisation
                                         </label>
                                     </div>
 
@@ -245,11 +246,11 @@ function TakeBetModal(args) {
                         <hr/>
                         <div className="tb-footer">
                             <FormGroup>
-                                <Label for="qtVictory">Your balance: </Label>
+                                <Label for="qtVictory">Votre solde: </Label>
                                 <p>{args.user.balance}</p>
                             </FormGroup>
                             <FormGroup className="tb-amount">
-                                <Label for="bet_value">Amount for pari</Label>
+                                <Label for="bet_value">Montant pour pari</Label>
                                 <Input
                                     type="number"
                                     step="1"
@@ -279,7 +280,7 @@ function TakeBetModal(args) {
             </Modal>
             <Modal isOpen={alert} backdrop="static" size="sm" {...args}>
                 <ModalHeader toggle={onDismiss} className="form-title">
-                    Error
+                    Erreur
                 </ModalHeader>
                 <ModalBody>
                     {alertMessage}
@@ -291,7 +292,7 @@ function TakeBetModal(args) {
                 </ModalHeader>
                 <ModalBody>
                     {messageModal}
-                    <p>You can see your tickets <a href="/user">here</a></p>
+                    <p>Vous pouvez voir vos paris <a href="/user">ici</a></p>
                 </ModalBody>
             </Modal>
         </div>

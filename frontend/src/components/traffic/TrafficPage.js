@@ -10,7 +10,8 @@ import withAuth from "../auth/CheckAuth";
 import UserHeader from "../user/UserHeader";
 import {useNavigate} from "react-router-dom";
 
-let endpoint = "http://localhost:8080/api/traffic"
+import { API_BASE_URL } from '../../config';
+let endpoint = `${API_BASE_URL}:8080/traffic/get`
 
 const withNavigate = (Component) => {
     return function WrappedComponent(props) {
@@ -80,7 +81,7 @@ class TrafficPage extends Component {
                     <div>
                         <Button onClick={this.resetState} outline={true} color="success">
                             <RxUpdate/>
-                            Update
+                            Actualiser
                         </Button>
                     </div>
                 </div>

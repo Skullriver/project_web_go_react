@@ -5,7 +5,8 @@ import CreationModal from "../bets/CreationModal";
 import '../../styles/userHeader.css';
 import {useNavigate} from "react-router-dom";
 
-let endpointUser = "http://localhost:8080/api/user"
+import { API_BASE_URL } from '../../config';
+let endpointUser = `${API_BASE_URL}:8080/user/get`
 
 const withNavigate = (Component) => {
     return function WrappedComponent(props) {
@@ -70,11 +71,11 @@ class UserHeader extends Component {
                 <div className="user-header">
                     <div>
                         <span>Username</span>
-                        <div>@{this.state.user.username}#{this.state.user.user_id}</div>
+                        <div>{this.state.user.username}#{this.state.user.user_id}</div>
 
                     </div>
                     <div>
-                        <span>Balance</span>
+                        <span>Solde</span>
                         <div>{this.state.user.balance}</div>
                     </div>
                     <div>
