@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/Skullriver/Sorbonne_PS3R.git/models"
 	"github.com/Skullriver/Sorbonne_PS3R.git/utility"
+	"strconv"
 	"time"
 )
 
@@ -330,7 +331,7 @@ func (r *postgresBetRepository) GetBetsToCheck(ctx context.Context, dateStart ti
 			ticket.UserID = int(userID.Int64)
 		}
 		if bid.Valid {
-			bid.Scan(ticket.Bid)
+			ticket.Bid, _ = strconv.ParseBool(bid.String)
 		}
 		if value.Valid {
 			ticket.Value = value.Float64
