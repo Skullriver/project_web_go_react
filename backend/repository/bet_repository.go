@@ -392,6 +392,7 @@ func (r *postgresBetRepository) GetActiveBets(ctx context.Context) ([]utility.Ac
         FROM bets AS b
         INNER JOIN users AS u ON b.user_id = u.id
         WHERE b.status IN ($1, $2) AND CURRENT_TIMESTAMP < b.limit_date
+		ORDER BY b.limit_date
     `
 
 	// Prepare the query
