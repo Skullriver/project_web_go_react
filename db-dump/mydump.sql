@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 13.3
--- Dumped by pg_dump version 13.3
+-- Dumped from database version 15.2 (Ubuntu 15.2-1.pgdg20.04+1)
+-- Dumped by pg_dump version 15.2 (Ubuntu 15.2-1.pgdg20.04+1)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -387,7 +387,7 @@ COPY public.bets (id, type, date_bet, limit_date, qt_victory, qt_loss, status, u
 12	2	2023-05-22 19:58:12	2023-05-21 21:00:00	1.5	2	opened	9	RER B forever	2023-05-20 18:06:21.909781
 13	3	2023-05-21 22:41:24.663	2023-05-20 22:41:24.663	3	1.2	opened	1	50 lignes ou il y'aura un problème	2023-05-20 20:42:50.645799
 14	3	2023-05-22 00:02:51.345	2023-05-21 21:00:00.345	2	1.5	created	10	test	2023-05-20 22:03:18.54846
-15	2	2023-05-23 13:44:21.833	2023-05-22 14:44:21.833	1	1	created	1	TEST	2023-05-22 11:44:46.570188
+15	2	2023-05-23 13:44:21.833	2023-05-22 21:00:00	1	1	created	1	TEST	2023-05-22 11:44:46.570188
 \.
 
 
@@ -499,6 +499,7 @@ COPY public.disruptions (id, disruption_id, line_id, status, type, color, effect
 160	c5d01d76-d930-11ed-8dcd-0a58a9feac02	line:IDFM:C01375	active	perturbation	#43B77A	OTHER_EFFECT	Métro 5 : Mouvement social 13 avril	<p><span style="background-color: rgb(206, 231, 247);">Information Ile de France Mobilités :</span></p><p><u>Mouvement social le jeudi 13 avril, sur le métro 5 :</u></p><p>Prévoir un trafic normal.</p><p>Certaines stations pourraient être fermées.</p><p><a href="https://www.ratp.fr/infos-trafic#infos-trafic__item_1" target="_blank">Plus d’informations sur le site ratp.fr</a></p>	2023-04-12 14:53:45	2023-04-13 04:30:00	2023-04-14 03:45:00
 161	e2146a04-d931-11ed-b685-0a58a9feac02	line:IDFM:C01376	active	perturbation	#43B77A	OTHER_EFFECT	Métro 6 : Mouvement social 13 avril	<p><span style="background-color: rgb(206, 231, 247);">Information Ile de France Mobilités :</span></p><p><u>Mouvement social le jeudi 13 avril, sur le métro 6 :</u></p><p>Prévoir un trafic normal.</p><p>Certaines stations pourraient être fermées.</p><p><a href="https://www.ratp.fr/infos-trafic#infos-trafic__item_1" target="_blank">Plus d’informations sur le site ratp.fr</a></p>	2023-04-12 14:59:38	2023-04-13 03:45:00	2023-04-14 04:30:00
 162	2c2f2c5a-d932-11ed-8dcd-0a58a9feac02	line:IDFM:C01377	active	perturbation	#43B77A	OTHER_EFFECT	Métro 7 : Mouvement social 13 avril	<p><span style="background-color: rgb(206, 231, 247);">Information Ile de France Mobilités :</span></p><p><u>Mouvement social le jeudi 13 avril, sur le métro 7 :</u></p><p>Prévoir un trafic normal.</p><p>Les stations Pyramides et Palais Royal-Musée du Louvre sont fermées à partir de 11h.</p><p><a href="https://www.ratp.fr/infos-trafic#infos-trafic__item_1" target="_blank">Plus d’informations sur le site ratp.fr</a></p>	2023-04-12 17:24:05	2023-04-13 04:30:00	2023-04-14 03:45:00
+317	9d04e202-f74c-11ed-930a-0a58a9feac02	line:IDFM:C01742	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne A : ralentissements	<p>Le trafic est ralenti de Saint-Germain-en-Laye vers Boissy-Saint-L&#233;ger. <br><br>Motif : malaise voyageur (en gare de St Germain en Laye)</p>	2023-05-20 22:26:34	2023-05-20 22:24:39	2023-05-20 23:30:00
 165	fb64cb9a-d939-11ed-94b4-0a58a9feac02	line:IDFM:C01378	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 8 : Mouvement social 13 avril	<p><span style="background-color: rgb(206, 231, 247);">Information Ile de France Mobilités :</span></p><p><u>Mouvement social le jeudi 13 avril, sur le métro 8 :</u></p><p>Prévoir 2 trains sur 3.</p><p>Certaines stations pourraient être fermées.</p><p><a href="https://www.ratp.fr/infos-trafic#infos-trafic__item_1" target="_blank">Plus d’informations sur le site ratp.fr</a></p>	2023-04-12 15:57:37	2023-04-13 04:30:00	2023-04-14 03:45:00
 166	931f4bca-d932-11ed-9517-0a58a9feac02	line:IDFM:C01379	active	perturbation	#43B77A	OTHER_EFFECT	Métro 9 : Mouvement social 13 avril	<p><span style="background-color: rgb(206, 231, 247);">Information Ile de France Mobilités :</span></p><p><u>Mouvement social le jeudi 13 avril, sur le métro 9 :</u></p><p>Prévoir un trafic normal.</p><p>Certaines stations pourraient être fermées.</p><p><a href="https://www.ratp.fr/infos-trafic#infos-trafic__item_1" target="_blank">Plus d’informations sur le site ratp.fr</a></p>	2023-04-12 15:04:35	2023-04-13 04:30:00	2023-04-14 03:45:00
 167	aa524766-d937-11ed-9517-0a58a9feac02	line:IDFM:C01380	active	perturbation	#43B77A	OTHER_EFFECT	Métro 10 : Mouvement social 13 avril	<p><span style="background-color: rgb(206, 231, 247);">Information Ile de France Mobilités :</span></p><p><u>Mouvement social le jeudi 13 avril, sur le métro 10 :</u></p><p>Prévoir un trafic normal.</p><p>Certaines stations pourraient être fermées.</p><p><a href="https://www.ratp.fr/infos-trafic#infos-trafic__item_1" target="_blank">Plus d’informations sur le site ratp.fr</a></p>	2023-04-12 15:41:02	2023-04-13 04:30:00	2023-04-14 03:45:00
@@ -649,7 +650,6 @@ COPY public.disruptions (id, disruption_id, line_id, status, type, color, effect
 313	4685db90-f731-11ed-8b34-0a58a9feac02	line:IDFM:C01742	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne A : ralentissements	<p>Le trafic est ralenti entre Marne-la-Vall&#233;e Chessy et Vincennes dans les 2 sens. <br></p><p><br></p><p>Motif : animal sur les voies dans le secteur de Neuilly-Plaisance.<br></p>	2023-05-20 19:10:52	2023-05-20 18:59:41	2023-05-20 20:00:00
 315	5203696c-f743-11ed-930a-0a58a9feac02	line:IDFM:C01382	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 12 : Incident (intervention agents) - Train stationne	<p>Le train stationne sur l'ensemble de la ligne en raison d'un incident nécessitant l’intervention de nos agents<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 21:20:03	2023-05-20 21:14:27	2023-05-20 22:00:27
 316	00940b56-f74b-11ed-8b34-0a58a9feac02	line:IDFM:C01371	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 1 : Incident affectant la voie - Reprise progressive / trafic reste perturbé	<p>Le trafic reprend mais reste perturbé sur l'ensemble de la ligne en raison d'un incident affectant la voie à Nation<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 22:15:02	2023-05-20 22:13:00	2023-05-21 03:45:00
-317	9d04e202-f74c-11ed-930a-0a58a9feac02	line:IDFM:C01742	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne A : ralentissements	<p>Le trafic est ralenti de Saint-Germain-en-Laye vers Boissy-Saint-L&#233;ger. <br><br>Motif : malaise voyageur (en gare de St Germain en Laye)</p>	2023-05-20 22:26:34	2023-05-20 22:24:39	2023-05-20 23:30:00
 318	4fb1bfa2-f88c-11ed-b1d4-0a58a9feac02	line:IDFM:C01376	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 6 : Panne de signalisation - Trafic perturbé	<p>Le trafic est perturbé sur l'ensemble de la ligne en raison d'une panne de signalisation à Place d'Italie<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-22 12:50:03	2023-05-22 12:44:00	2023-05-23 03:45:00
 319	d1618310-f888-11ed-930a-0a58a9feac02	line:IDFM:C01376	past	perturbation	#FF0000	NO_SERVICE	Métro 6 : Intervention des équipes techniques - Trafic interrompu	<p>Le trafic est interrompu entre Place d'Italie et Raspail en raison d'une intervention des équipes techniques à Place d'Italie<br>Heure de reprise estimée : 12h30.<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-22 12:35:02	2023-05-22 12:27:44	2023-05-22 12:28:44
 320	64dc5bcc-f895-11ed-b125-0a58a9feac02	line:IDFM:C01384	active	perturbation	#FF0000	NO_SERVICE	Métro 14 : Malaise voyageur - Trafic interrompu	<p>Le trafic est interrompu entre Saint-Lazare et Châtelet en raison d'un malaise voyageur à Madeleine<br>Heure de reprise estimée : 14h00.<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-22 13:40:04	2023-05-22 13:35:00	2023-05-23 03:45:00
@@ -658,6 +658,11 @@ COPY public.disruptions (id, disruption_id, line_id, status, type, color, effect
 323	eac9af12-f89c-11ed-b1d4-0a58a9feac02	line:IDFM:C01728	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne D Melun - Corbeil-Ess. : suppressions	<p>Train supprim&#233; :<br>- ROSA, d&#233;part Melun 17h26, arriv&#233;e Corbeil-Essonnes 17h56.<br><br>Prochain train &#224; circuler :<br>- ROSA, d&#233;part Melun 17h41, arriv&#233;e Corbeil-Essonnes 18h11.<br></p><p><br></p><p>Train supprim&#233; : <br>- ZOSO, d&#233;part de Corbeil-Essonnes 18h17,&#160; arriv&#233;e Melun &#224; 18h47<br><br>Prochain train &#224; circuler : <br>- ZOSO, d&#233;part de Corbeil-Essonnes &#224; 18h32, arriv&#233;e Melun 19h02<br><br></p><p><br></p><p>Risque d'affluence &#224; bord des trains suivants.<br><br><br>Motif : conditions de d&#233;part non r&#233;unies (train immobilis&#233; en atelier de maintenance).<br><br><br></p>	2023-05-22 14:33:55	2023-05-22 14:25:34	2023-05-22 19:10:52
 324	c844b0ac-f89e-11ed-930a-0a58a9feac02	line:IDFM:C01728	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne D : Melun <-> Corbeil-Ess. suppressions	<p>Train supprim&#233; :<br>- ROSA, d&#233;part Melun 18h56, arriv&#233;e Corbeil-Essonnes 19h26.<br><br>Prochain train &#224; circuler :<br>- ROSA, d&#233;part&#160; Melun 19h11, arriv&#233;e Corbeil-Essonnes 19h41. <br></p><p>Train supprim&#233; : <br>- ZOSO, d&#233;part&#160; Corbeil-Essonnes&#160; 19h47, arriv&#233;e&#160; Melun 20h17. <br><br>Prochain train &#224; circuler : <br>- ZOSO, d&#233;part Corbeil-Essonnes 20h02, arriv&#233;e &#224; Melun 20h32. <br><br></p><p><br>Motif : conditions de d&#233;part non r&#233;unies (train immobilis&#233; en atelier de maintenance)</p>	2023-05-22 14:47:16	2023-05-22 14:37:58	2023-05-22 20:20:30
 325	8ca1b5f8-f89f-11ed-930a-0a58a9feac02	line:IDFM:C01728	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne D Melun - Corbeil-Ess. : suppression	<p>Train supprim&#233; :<br>- ROSA d&#233;part Melun 19h56, arriv&#233;e Corbeil-Essonnes 20h26. <br><br>Prochain train &#224; circuler :<br>- ROSA d&#233;part Melun 20h26, arriv&#233;e Corbeil-Essonnes 20h56.<br><br>Risque d'affluence &#224; bord du train suivant.<br><br>Motif : conditions de d&#233;part non r&#233;unies (train immobilis&#233; en atelier de maintenance).<br></p><p><br></p><p><br></p>	2023-05-22 14:52:46	2023-05-22 14:48:59	2023-05-22 20:49:13
+326	705c871a-f8b3-11ed-8b34-0a58a9feac02	line:IDFM:C01373	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 3 : Panne de signalisation - Trafic perturbé	<p>Le trafic est perturbé sur l'ensemble de la ligne en raison d'une panne de signalisation à Saint-Lazare<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-22 17:15:08	2023-05-22 17:14:00	2023-05-23 03:45:00
+327	dbf82318-f8ad-11ed-930a-0a58a9feac02	line:IDFM:C01376	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 6 : Panne de signalisation - Trafic perturbé	<p>Le trafic est perturbé sur l'ensemble de la ligne en raison d'une panne de signalisation à Place d'Italie<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-22 16:45:06	2023-05-22 16:39:00	2023-05-23 03:45:00
+328	6e5f5b86-f8b3-11ed-a257-0a58a9feac02	line:IDFM:C01383	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 13 : Personnes sur les voies - Trafic perturbé	<p>Le trafic est perturbé sur l'ensemble de la ligne en raison de personnes sur les voies à Porte de Saint-Ouen<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-22 17:25:04	2023-05-22 17:20:00	2023-05-23 03:45:00
+329	1939b256-f8a3-11ed-b125-0a58a9feac02	line:IDFM:C01727	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne C Pontoise - Massy-P. : suppressions	<p>Train supprim&#233; :<br>- Le train MONA au d&#233;part de la gare de Pontoise &#224; 15h28, et &#224; l&#8217;arriv&#233;e en gare de Massy Palaiseau &#224; 17h20.<br><br>Train modifi&#233; :<br>Le train NORA au d&#233;part de la gare de Massy Palaiseau &#224; 17h40, a son d&#233;part report&#233; en gare de Vitry Sur Seine &#224; 18h10 et &#224; l&#8217;arriv&#233;e en gare de Pontoise &#224; 19h33.<br><br>Prochains trains &#224; circuler :<br>- Le train MONA au d&#233;part de la gare de Pontoise &#224; 15h57, et &#224; l&#8217;arriv&#233;e en gare de Massy Palaiseau &#224; 17h50.<br>- Le train NORA au d&#233;part de la gare de Massy Palaiseau &#224; 18h10, et &#224; l&#8217;arriv&#233;e en gare de Pontoise &#224; 20h03.<br><br><br>Motif : panne d'un train.<br><br></p>	2023-05-22 16:27:55	2023-05-22 15:15:04	2023-05-22 19:33:00
+330	d3cc2744-f8b6-11ed-8b34-0a58a9feac02	line:IDFM:C01728	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne D : ralentissements	<p>Le trafic est ralenti de Goussainville vers Villeneuve S Georges. <br><br>Motif : panne d'un train &#224; Villiers le Bel (incident termin&#233;).<br></p>	2023-05-22 17:39:24	2023-05-22 17:36:06	2023-05-22 18:36:36
 \.
 
 
@@ -986,6 +991,11 @@ COPY public.log (id, created_at, disruption_id) FROM stdin;
 323	2023-05-22 12:36:17.861145	323
 324	2023-05-22 12:51:24.180475	324
 325	2023-05-22 12:56:25.880953	325
+326	2023-05-22 17:54:36.77203	326
+327	2023-05-22 17:54:36.786109	327
+328	2023-05-22 17:54:36.794101	328
+329	2023-05-22 17:54:38.438168	329
+330	2023-05-22 17:54:38.445546	330
 \.
 
 
@@ -1029,7 +1039,7 @@ COPY public.users (id, username, email, password, account_balance) FROM stdin;
 9	Arthuroo1	apendelliou@hotmail.fr	$2a$10$/4UIkdRf..LDdq/yiH9TKeCFZ2A6G13b.CxwbQ9mO9Oe4eG0asENi	2700
 2	Skullriver	test@test.ru	$2a$10$rPL7w/5EbIUCr3ibqhptGuTogueMwsxSMLJzS0UgiCBTV.2nFN8fa	1400
 10	Alina	test2@test.ru	$2a$10$olKqyTw.qTXQk/d7CYDkBuu3CH8hUDXv6EycMXfauRmrcCaqIiigq	3200
-1	LeDiable	amori.c2302@yahoo.fr	$2a$10$6vaWVQpqrf014jB.ubvYfubjuSViAvftq16qMUnzXORpil98Bw8Ym	200
+1	LeDiable	amori.c2302@yahoo.fr	$2a$10$6vaWVQpqrf014jB.ubvYfubjuSViAvftq16qMUnzXORpil98Bw8Ym	1000000
 \.
 
 
@@ -1044,7 +1054,7 @@ SELECT pg_catalog.setval('public.bet_id_seq', 15, true);
 -- Name: disruptions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ps3r
 --
 
-SELECT pg_catalog.setval('public.disruptions_id_seq', 325, true);
+SELECT pg_catalog.setval('public.disruptions_id_seq', 330, true);
 
 
 --
@@ -1058,7 +1068,7 @@ SELECT pg_catalog.setval('public.lines_id_seq', 21, true);
 -- Name: log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ps3r
 --
 
-SELECT pg_catalog.setval('public.log_id_seq', 325, true);
+SELECT pg_catalog.setval('public.log_id_seq', 330, true);
 
 
 --
