@@ -134,6 +134,13 @@ func (s *ApiService) UpdateTraffic(ctx context.Context, url string) {
 
 	response := SendRequest(url)
 
+	// Load the "Europe/Paris" time zone
+	location, err := time.LoadLocation("Europe/Paris")
+	if err != nil {
+		// Handle error
+		return
+	}
+
 	disruptions := getDisruptionsMap(response)
 
 	for _, lineReport := range response.LineReports {
@@ -218,7 +225,7 @@ func (s *ApiService) UpdateTraffic(ctx context.Context, url string) {
 						if disruption.ID != 0 {
 							dbLog := &models.Log{
 								DisruptionID: disruption.ID,
-								CreatedAt:    time.Now(),
+								CreatedAt:    time.Now().In(location),
 							}
 							_, e = s.LogRepository.Create(ctx, dbLog)
 							if e != nil {

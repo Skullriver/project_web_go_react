@@ -360,3 +360,21 @@ func (h *BetHandler) GetUserHandler(w http.ResponseWriter, r *http.Request) {
 	// Print the response body
 	json.NewEncoder(w).Encode(resp)
 }
+
+func (h *BetHandler) CheckBetHandler(w http.ResponseWriter, r *http.Request) {
+
+	// Create a new context with a timeout of 5 seconds
+	timeString := os.Getenv("CONTEXT_TIME")
+	timeValue, err := strconv.Atoi(timeString)
+
+	if err != nil {
+		// Handle error
+		panic(err)
+	}
+
+	contextTime := time.Duration(timeValue) * time.Second
+	ctx, cancel := context.WithTimeout(context.Background(), contextTime)
+	defer cancel()
+
+	h.api.CheckBets(ctx)
+}

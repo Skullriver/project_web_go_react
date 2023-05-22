@@ -125,7 +125,7 @@ func (s *BetService) CreateBet(ctx context.Context, req utility.CreateBetRequest
 		QtLoss:    QtLossFloat,
 		Status:    "created",
 		UserID:    userID,
-		Created:   time.Now().Local(),
+		Created:   time.Now().In(location),
 	}
 
 	// Insert the new bet object into the database
@@ -220,8 +220,13 @@ func (s *BetService) TakeBet(ctx context.Context, req utility.TakeBetRequest, us
 		return 0, errors.New("bet taking failed: invalid betID")
 	}
 
+	location, err := time.LoadLocation("Europe/Paris")
+	if err != nil {
+		// Handle error
+		return 0, err
+	}
 	// Check if bet's limit date is in the future
-	if bet.LimitDate.Before(time.Now()) {
+	if bet.LimitDate.Before(time.Now().In(location)) {
 		return 0, errors.New("bet taking failed: limit date has passed")
 	}
 
@@ -334,8 +339,14 @@ func (s *BetService) GetTicketsByUserID(ctx context.Context, userID int64) ([]ut
 
 func (s *BetService) CheckBets(ctx context.Context) {
 
+	location, err := time.LoadLocation("Europe/Paris")
+	if err != nil {
+		// Handle error
+		return
+	}
+
 	// Get the current date
-	currentTime := time.Now()
+	currentTime := time.Now().In(location)
 
 	// Subtract one day from the current date
 	previousDay := currentTime.AddDate(0, 0, -1)

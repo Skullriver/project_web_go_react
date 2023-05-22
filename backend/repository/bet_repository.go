@@ -21,7 +21,7 @@ type BetRepository interface {
 	CreateTicket(ctx context.Context, betID int, userID int64, bid bool, value float64) (int, error)
 	GetTicketsByUserID(ctx context.Context, userID int64) ([]utility.Ticket, error)
 	GetBetsNbForUser(ctx context.Context, userID int64) (int, error)
-	GetBetsToCheck(ctx context.Context, dateStart time.Time, dateEnd time.Time) ([]utility.BetToCheck, error)
+	GetBetsToCheck(ctx context.Context, dateStart time.Time, dateEnd time.Time) (map[int]utility.BetToCheck, error)
 }
 
 type BetType interface {
@@ -172,7 +172,12 @@ func (r *postgresBetRepository) GetBetsByUserID(ctx context.Context, userID int6
 
 func (r *postgresBetRepository) GetBetsNbForUser(ctx context.Context, userID int64) (int, error) {
 	// Get the current date
-	currentDate := time.Now().Format("2006-01-02")
+	location, err := time.LoadLocation("Europe/Paris")
+	if err != nil {
+		// Handle error
+		return 0, err
+	}
+	currentDate := time.Now().In(location).Format("2006-01-02")
 
 	// Define the SQL query with placeholders for user ID and status
 	query := `
@@ -259,14 +264,14 @@ func (r *postgresBetRepository) GetTicketsByUserID(ctx context.Context, userID i
 	return activeTickets, nil
 }
 
-func (r *postgresBetRepository) GetBetsToCheck(ctx context.Context, dateStart time.Time, dateEnd time.Time) ([]utility.BetToCheck, error) {
+func (r *postgresBetRepository) GetBetsToCheck(ctx context.Context, dateStart time.Time, dateEnd time.Time) (map[int]utility.BetToCheck, error) {
 
 	// Define the SQL query with placeholders for user ID and status
 	query := `
         SELECT b.id, t.id, t.user_id, t.bid, t.value, t.status
 		FROM bets b
-		INNER JOIN tickets AS t ON t.bet_id = b.id 
-        WHERE b.date_bet >= $1 AND b.date_bet <= $2
+		LEFT JOIN tickets AS t ON t.bet_id = b.id 
+        WHERE b.date_bet >= $1 AND b.date_bet <= $2 AND b.status IN ('opened', 'created')
     `
 
 	// Prepare the query
@@ -284,29 +289,68 @@ func (r *postgresBetRepository) GetBetsToCheck(ctx context.Context, dateStart ti
 	defer rows.Close()
 
 	// Iterate over the rows and scan the values into ActiveBet structs
-	var bets []utility.BetToCheck
+	// Map to store bets by ID
+	betMap := make(map[int]utility.BetToCheck)
+
 	for rows.Next() {
-		var bet utility.BetToCheck
+		var betID int
 		var ticket utility.TicketToCheck
+
+		var ticketID sql.NullInt64
+		var userID sql.NullInt64
+		var bid sql.NullString
+		var value sql.NullFloat64
+		var status sql.NullString
+
 		if err := rows.Scan(
-			&bet.ID,
-			&ticket.ID,
-			&ticket.UserID,
-			&ticket.Bid,
-			&ticket.Value,
-			&ticket.Status,
+			&betID,
+			&ticketID,
+			&userID,
+			&bid,
+			&value,
+			&status,
 		); err != nil {
 			return nil, err
 		}
+
+		// Create a new BetToCheck struct if it doesn't exist in the map
+		bet, ok := betMap[betID]
+		if !ok {
+			bet = utility.BetToCheck{
+				ID:      betID,
+				Tickets: []utility.TicketToCheck{},
+			}
+		}
+
+		// Check for null values and handle them accordingly
+		if ticketID.Valid {
+			ticket.ID = int(ticketID.Int64)
+		}
+		if userID.Valid {
+			ticket.UserID = int(userID.Int64)
+		}
+		if bid.Valid {
+			bid.Scan(ticket.Bid)
+		}
+		if value.Valid {
+			ticket.Value = value.Float64
+		}
+		if status.Valid {
+			ticket.Status = status.String
+		}
+
 		// Add the ticket to the respective bet
-		bet.Tickets = append(bet.Tickets, ticket)
-		bets = append(bets, bet)
+		if ticketID.Valid {
+			// Add the ticket to the respective bet
+			bet.Tickets = append(bet.Tickets, ticket)
+		}
+		betMap[betID] = bet
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
 
-	return bets, nil
+	return betMap, nil
 }
 
 func (r *postgresBetRepository) UpdateBetStatus(ctx context.Context, betID int, betStatus string) error {
