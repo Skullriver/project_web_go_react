@@ -385,13 +385,17 @@ func (r *postgresBetRepository) DeleteBet(ctx context.Context, id int) error {
 
 func (r *postgresBetRepository) GetActiveBets(ctx context.Context) ([]utility.ActiveBet, error) {
 
+	// Get the current date
+	location, err := time.LoadLocation("Europe/Paris")
+
+	now := time.Now().In(location)
 	// Define the SQL query with placeholders for user ID and status
 	query := `
         SELECT b.id, b.title, b.type, b.date_bet, b.limit_date, b.qt_victory, 
                b.qt_loss, b.status, b.user_id, u.username, b.created
         FROM bets AS b
         INNER JOIN users AS u ON b.user_id = u.id
-        WHERE b.status IN ($1, $2) AND CURRENT_TIMESTAMP < b.limit_date
+        WHERE b.status IN ($1, $2) AND $3 < b.limit_date
 		ORDER BY b.limit_date
     `
 
@@ -403,7 +407,7 @@ func (r *postgresBetRepository) GetActiveBets(ctx context.Context) ([]utility.Ac
 	defer stmt.Close()
 
 	// Execute the query with status values
-	rows, err := stmt.QueryContext(ctx, "created", "opened")
+	rows, err := stmt.QueryContext(ctx, "created", "opened", now)
 	if err != nil {
 		return nil, err
 	}
