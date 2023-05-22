@@ -2,8 +2,8 @@
 -- PostgreSQL database dump
 --
 
--- Dumped from database version 15.2 (Ubuntu 15.2-1.pgdg20.04+1)
--- Dumped by pg_dump version 15.2 (Ubuntu 15.2-1.pgdg20.04+1)
+-- Dumped from database version 13.3
+-- Dumped by pg_dump version 13.3
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -336,6 +336,9 @@ ALTER TABLE ONLY public.users ALTER COLUMN id SET DEFAULT nextval('public.users_
 --
 
 COPY public.bet_type1 (id, m_r, num_type, value) FROM stdin;
+1	RER	1	50
+8	Metro	1	50
+11	RER	2	5
 \.
 
 
@@ -344,6 +347,12 @@ COPY public.bet_type1 (id, m_r, num_type, value) FROM stdin;
 --
 
 COPY public.bet_type2 (id, m_r, line) FROM stdin;
+2	Metro	line:IDFM:C01374
+3	Metro	line:IDFM:C01374
+6	RER	line:IDFM:C01727
+10	Metro	line:IDFM:C01382
+12	RER	line:IDFM:C01743
+15	Metro	line:IDFM:C01372
 \.
 
 
@@ -352,6 +361,11 @@ COPY public.bet_type2 (id, m_r, line) FROM stdin;
 --
 
 COPY public.bet_type3 (id, m_r, value) FROM stdin;
+4	Metro	10
+7	Metro	3
+9	Metro	1000000000000000000000000000
+13	RER	50
+14	Metro	14
 \.
 
 
@@ -360,6 +374,20 @@ COPY public.bet_type3 (id, m_r, value) FROM stdin;
 --
 
 COPY public.bets (id, type, date_bet, limit_date, qt_victory, qt_loss, status, user_id, title, created) FROM stdin;
+4	3	2023-05-21 14:14:17.873	2023-05-20 21:00:00.873	1.5	2	created	2	La chance	2023-05-20 12:17:11.605345
+6	2	2023-05-21 14:18:29.435	2023-05-20 18:00:00.435	1.5	1.2	created	2	Rer C toujours en retard 	2023-05-20 12:19:16.497077
+1	1	2023-05-21 13:15:52.901	2023-05-20 21:00:00.901	1.5	2.5	opened	1	50% de lignes ou il y'aura un pb	2023-05-20 11:17:49.755675
+7	3	2023-05-21 14:47:53	2023-05-20 16:00:00.119	1.2	1.6	created	5	♥♥РАССИЯ♥♥	2023-05-20 12:49:51.282679
+2	2	2023-05-21 14:09:05.434	2023-05-20 21:00:00.434	2	1.2	opened	2	Metro 4 toujours les problems…	2023-05-20 12:10:07.973983
+9	3	2030-06-20 14:54:44	2023-05-20 15:54:44.587	3	2	created	5	paris	2023-05-20 12:56:54.46537
+3	2	2023-05-21 14:09:15.333	2023-05-20 15:09:15.333	1.1	3	opened	1	toujours un problème sur la ligne 4...	2023-05-20 12:10:16.801928
+8	1	2023-05-26 14:50:19	2023-05-20 15:50:19.312	1.6	2	opened	5	 	2023-05-20 12:51:15.195134
+11	1	2023-05-21 18:03:02.305	2023-05-20 19:03:02.305	1	2	created	8	Paris 1	2023-05-20 16:04:01.857023
+10	2	2023-05-21 15:15:01	2023-05-20 21:00:00.157	1.1	3	opened	6	La 12 va-t-elle fonctionner correctement le temps d'une journée ?	2023-05-20 13:16:08.20922
+12	2	2023-05-22 19:58:12	2023-05-21 21:00:00	1.5	2	opened	9	RER B forever	2023-05-20 18:06:21.909781
+13	3	2023-05-21 22:41:24.663	2023-05-20 22:41:24.663	3	1.2	opened	1	50 lignes ou il y'aura un problème	2023-05-20 20:42:50.645799
+14	3	2023-05-22 00:02:51.345	2023-05-21 21:00:00.345	2	1.5	created	10	test	2023-05-20 22:03:18.54846
+15	2	2023-05-23 13:44:21.833	2023-05-22 14:44:21.833	1	1	created	1	TEST	2023-05-22 11:44:46.570188
 \.
 
 
@@ -598,6 +626,38 @@ COPY public.disruptions (id, disruption_id, line_id, status, type, color, effect
 291	51b53bbe-f68c-11ed-8b34-0a58a9feac02	line:IDFM:C01382	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 12 : Bagage oublié - Reprise progressive / trafic reste perturbé	<p>Le trafic reprend mais reste perturbé sur l'ensemble de la ligne en raison d'un bagage oublié à Mairie d'Issy<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 00:20:06	2023-05-20 00:17:00	2023-05-21 03:45:00
 292	31bd334a-f662-11ed-a257-0a58a9feac02	line:IDFM:C01728	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne D Stade de France: 19/05 aucun train dès 23h	<p>Vendredi 19 mai</p><p>A partir de 23h en gare du Stade de France, aucun train pour le nord de la Ligne.<br>Des bus de remplacement circulent,</p><p>( ceux au d&#233;part de la station de m&#233;tro Saint Denis Universit&#233; sur la Ligne 13<b></b> ne desservent pas par la gare de Stade de France ).<br><br>Les horaires du calculateur d'itin&#233;raire tiennent compte de ces travaux</p><p><br></p><p>Motif : travaux.<br></p><p><br></p>	2023-05-19 22:43:28	2023-05-19 23:00:00	2023-05-20 02:30:00
 293	f0965800-f69e-11ed-b1d4-0a58a9feac02	line:IDFM:C01742	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne A : ralentissements	<p>Le trafic est ralenti de La D&#233;fense vers Rueil-Malmaison. <br><br>Motif : d&#233;clenchement du signal d'alarme en gare de Charles de Gaulle - Etoile</p>	2023-05-20 01:43:22	2023-05-20 01:40:57	2023-05-20 02:00:00
+294	c61eb64a-f6fc-11ed-b125-0a58a9feac02	line:IDFM:C01371	active	perturbation	#FF0000	NO_SERVICE	Métro 1 : Intervention des équipes techniques - Trafic interrompu	<p>Le trafic est interrompu entre Château de Vincennes et Châtelet en raison d'une intervention des équipes techniques<br>Heure de reprise estimée : 13h25.<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 13:00:04	2023-05-20 12:53:00	2023-05-21 03:45:00
+295	3940fc80-f6f5-11ed-a257-0a58a9feac02	line:IDFM:C01727	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne C Versail.Château - Juvisy : suppressions	<p>Trains supprim&#233;s :</p><p><br></p><p>- Le train JILL au d&#233;part de la gare de Versailles Rive Gauche &#224; 12h25, et pr&#233;vu &#224; l'arriv&#233;e en gare de Juvisy &#224; 13h29.</p><p>- Le train VICK au d&#233;part de la gare de Juvisy &#224; 13h46, et pr&#233;vu &#224; l'arriv&#233;e en gare de Versailles Rive Gauche &#224; 14h49.<br></p><p>Prochain train &#224; circuler :<br><br>- Le train JILL au d&#233;part de la gare de Versailles Rive Gauche &#224; 12h40, et pr&#233;vu &#224; l'arriv&#233;e en gare de Juvisy &#224; 13h49.</p><p>- Le train VICK au d&#233;part de la gare de Juvisy &#224; 14h02, et pr&#233;vu &#224; l'arriv&#233;e en gare de Versailles Rive Gauche &#224; 15h04.</p><p>Risque d'affluence &#224; bord des trains suivants.<br><br>Motif : panne d'un train.<br><br><br></p>	2023-05-20 12:10:20	2023-05-20 11:58:09	2023-05-20 14:50:22
+296	74cb97f6-f704-11ed-930a-0a58a9feac02	line:IDFM:C01371	active	perturbation	#FF0000	NO_SERVICE	Métro 1 : Incident affectant la voie - Trafic interrompu	<p>Le trafic est interrompu entre Château de Vincennes et Châtelet en raison d'un incident affectant la voie à Nation<br>Heure de reprise estimée : 14h30.<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 13:50:03	2023-05-20 13:47:00	2023-05-21 03:45:00
+297	0a52a9cc-f70a-11ed-b125-0a58a9feac02	line:IDFM:C01373	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 3 : Personnes sur les voies - Trafic perturbé	<p>Le trafic est perturbé sur l'ensemble de la ligne en raison de personnes sur les voies<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 14:30:01	2023-05-20 14:25:00	2023-05-21 03:45:00
+298	250a0344-f70c-11ed-b1d4-0a58a9feac02	line:IDFM:C01373	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 3 : Divers incidents - Trafic perturbé	<p>Le train stationne entre Anatole-France et Louise Michel en direction de Gallieni en raison d'un incident nécessitant l’intervention du conducteur<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 14:45:05	2023-05-20 14:40:34	2023-05-20 15:26:34
+299	4348e01a-f710-11ed-b125-0a58a9feac02	line:IDFM:C01727	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne C Invalides - Pontoise : suppressions	<p>Trains supprim&#233;s :<br>- Le train NORA au d&#233;part de la gare d&#8217;Invalides &#224; 16h58 pour une arriv&#233;e en gare de Pontoise &#224; 18h02<br>- Le train LOLA au d&#233;part de la gare de Pontoise &#224; 18h28 pour une arriv&#233;e en gare d&#8217;Invalides &#224; 19h31</p><p>-Le train LOLA au d&#233;part de la gare de Pontoise &#224; 18h58 pour une arriv&#233;e en gare d&#8217;Invalides &#224; 20h01</p><p>-Le train GOTA au d&#233;part de la gare d&#8217;Invalides &#224; 20h13 pour une arriv&#233;e en gare de Montigny Beauchamp &#224; 21h04</p><p>Prochains trains &#224; circuler :<br>- Le train NORA au d&#233;part de la gare d&#8217;Invalides &#224; 17h58 pour une arriv&#233;e en gare de Pontoise &#224; 19h02<br>- Le train LOLA au d&#233;part de la gare de Montigny Beauchamp &#224; 18h55 pour une arriv&#233;e en gare d&#8217;Invalides &#224; 19h46</p><p>-Le train LOLA au d&#233;part de la gare de Montigny Beauchamp &#224; 19h25 pour une arriv&#233;e en gare d&#8217;Invalides &#224; 20h16<br>Risque d'affluence &#224; bord des trains suivants.</p><p>-Le train LOLA au d&#233;part de la gare de Pontoise &#224; 19h28 pour une arriv&#233;e en gare d&#8217;Invalides &#224; 20h31</p><p>-Le train NORA au d&#233;part de la gare d&#8217;Invalides &#224; 20h28 pour un passage en gare de Montigny Beauchamp &#224; 21h18<br><br>Motif : difficult&#233;s li&#233;es &#224; un manque de personnel.<br><br><br></p>	2023-05-20 15:14:34	2023-05-20 15:09:47	2023-05-20 21:00:02
+300	2d99828e-f714-11ed-930a-0a58a9feac02	line:IDFM:C01727	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne C St-Quentin - Invalides : suppressions	<p>Trains supprim&#233;s :<br>- Le train LOLA au d&#233;part de la gare de Saint Quentin-en-Yvelines &#224; 17h10 pour une arriv&#233;e en gare d&#8217;Invalides &#224; 17h51<br>- Le train SARA au d&#233;part de la gare d&#8217;Invalides &#224; 18h08 pour une arriv&#233;e en gare de Saint Quentin-en-Yvelines &#224; 18h51</p><p>-Le train LOLA au d&#233;part de la gare de Saint Quentin-en-Yvelines &#224; 19h10 pour une arriv&#233;e en gare d&#8217;Invalides &#224; 19h51</p><p>-Le train SARA au d&#233;part de la gare d&#8217;Invalides &#224; 20h08 pour une arriv&#233;e en gare de Saint Quentin-en-Yvelines &#224; 20h51</p><p>-Le train LOLA au d&#233;part de la gare de Saint Quentin-en-Yvelines &#224; 21h10 pour une arriv&#233;e en gare d&#8217;Invalides &#224; 21h51<br></p><p><br></p><p>Prochains trains &#224; circuler :<br>- Le train LOLA au d&#233;part de la gare de Saint Quentin-en-Yvelines &#224; 17h40 pour une arriv&#233;e en gare d&#8217;Invalides &#224; 18h21<br>- Le train SARA au d&#233;part de la gare d&#8217;Invalides &#224; 18h38 pour une arriv&#233;e en gare de Saint Quentin-en-Yvelines &#224; 19h21</p><p>-Le train LOLA au d&#233;part de la gare de Saint Quentin-en-Yvelines &#224; 19h40 pour une arriv&#233;e en gare d&#8217;Invalides &#224; 20h21<br></p><p>-Le train SARA au d&#233;part de la gare d&#8217;Invalides &#224; 20h38 pour une arriv&#233;e en gare de Saint Quentin-en-Yvelines &#224; 21h21</p><p>-Le train LOLA au d&#233;part de la gare de Saint Quentin-en-Yvelines &#224; 21h40 pour une arriv&#233;e en gare d&#8217;Invalides &#224; 22h21<br><br>Motif : difficult&#233;s li&#233;es &#224; un manque de personnel.<br><br><br></p>	2023-05-20 15:42:35	2023-05-20 15:39:29	2023-05-20 21:50:41
+301	88f5e8f2-f714-11ed-b1d4-0a58a9feac02	line:IDFM:C01376	active	perturbation	#FF0000	NO_SERVICE	Métro 6 : Train en panne - Trafic interrompu	<p>Le trafic est interrompu entre Charles de Gaulle - Etoile et Trocadéro en raison d'un train en panne à Charles de Gaulle - Etoile<br>Heure de reprise estimée : 16h00.<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 15:45:08	2023-05-20 15:42:00	2023-05-21 03:45:00
+302	d2df1d86-f713-11ed-930a-0a58a9feac02	line:IDFM:C01376	active	perturbation	#FF0000	NO_SERVICE	Métro 6 : Train en panne - Trafic interrompu	<p>Le trafic est interrompu entre Trocadéro et Charles de Gaulle - Etoile en raison d'un train en panne à Charles de Gaulle - Etoile<br>Heure de reprise estimée : 16h15.<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 15:45:07	2023-05-20 15:42:00	2023-05-21 03:45:00
+303	f813daf0-f714-11ed-930a-0a58a9feac02	line:IDFM:C01727	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne C Vers.Chantiers- Paris Aust. : suppressions	<p>Trains supprim&#233;s :<br>- Le train ZORA au d&#233;part de la gare de Versailles Chantiers &#224; 18h15 pour une arriv&#233;e en gare de Paris Austerlitz Banlieue &#224; 19h19<br>- Le train CIMO au d&#233;part de la gare de Paris Austerlitz Banlieue &#224; 19h40 pour une arriv&#233;e en gare de Versailles Chantiers &#224; 20h49<br><br>Prochains trains &#224; circuler :<br>-&#160;Le train ZORA au d&#233;part de la gare de Versailles Chantiers &#224; 18h45 pour une arriv&#233;e en gare de Paris Austerlitz Banlieue &#224; 19h49<br>- Le train CIMO au d&#233;part de la gare de Paris Austerlitz Banlieue &#224; 20h10 pour une arriv&#233;e en gare de Versailles Chantiers &#224; 21h19<br><br><br>Motif : difficult&#233;s li&#233;es &#224; un manque de personnel.<br><br><br></p>	2023-05-20 15:48:15	2023-05-20 15:44:22	2023-05-20 20:50:58
+304	5ff08984-f715-11ed-a257-0a58a9feac02	line:IDFM:C01727	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne C Versail.Château - Juvisy : suppression	<p>Train supprim&#233; :<br>- Le train JILL au d&#233;part de la gare de Versailles Ch&#226;teau Rive Gauche &#224; 19h25 pour une arriv&#233;e en gare de Juvisy &#224; 20h32<br><br>Prochain train &#224; circuler :<br>- &#160;Le train JILL au d&#233;part de la gare de Versailles Ch&#226;teau Rive Gauche &#224; 19h40 pour une arriv&#233;e en gare de Juvisy &#224; 20h44<br><br><br>Motif : difficult&#233;s li&#233;es &#224; un manque de personnel.<br></p><p><br></p><p><br></p>	2023-05-20 15:51:09	2023-05-20 15:48:30	2023-05-20 20:30:45
+305	9f429892-f716-11ed-a257-0a58a9feac02	line:IDFM:C01376	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 6 : Train en panne - Reprise progressive / trafic reste perturbé	<p>Le trafic reprend mais reste perturbé sur l'ensemble de la ligne en raison d'un train en panne à Charles de Gaulle - Etoile<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 16:00:05	2023-05-20 15:55:59	2023-05-20 16:41:59
+306	0d5e8b36-f719-11ed-b1d4-0a58a9feac02	line:IDFM:C01727	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne C : ralentissements	<p>Le trafic est ralenti entre Invalides et Gennevilliers dans les 2 sens. <br><br>Motif : incident voyageur (chute d'un voyageur dans un train en gare de Boulainvilliers)</p>	2023-05-20 16:17:29	2023-05-20 16:15:09	2023-05-20 16:45:21
+307	3896aefa-f719-11ed-b125-0a58a9feac02	line:IDFM:C01728	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne D : Melun <-> Corbeil-Ess. trafic ralenti	<p>Le trafic est ralenti entre Melun et Corbeil Essonnes dans les 2 sens. <br><br>Motif : panne sur les installations du gestionnaire de r&#233;seau (dysfonctionnement d&#8217;un passage &#224; niveau dans le secteur de Villab&#233;.</p>	2023-05-20 16:18:41	2023-05-20 16:16:10	2023-05-20 17:30:24
+308	78040cd4-f725-11ed-b1d4-0a58a9feac02	line:IDFM:C01727	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne C Pont de Rungis-Paris Austerl : suppression	<p>Train supprim&#233; :<br>- Le train ZORA au d&#233;part de la gare de Pont-de-Rungis &#224; 18h08 pour une arriv&#233;e en gare de Paris Austerlitz Banlieue &#224; 18h34<br>Prochain train &#224; circuler :<br>- Le train ZORA au passage en gare de Pont-de-Rungis &#224; 18h22 pour une arriv&#233;e en gare de Paris Austerlitz Banlieue &#224; 18h49<br><br><br>Motif : acte de vandalisme (d&#233;gradation du train).<br></p><p><br></p><p><br></p>	2023-05-20 17:46:21	2023-05-20 17:43:09	2023-05-20 18:30:21
+314	772e3b3c-f733-11ed-930a-0a58a9feac02	line:IDFM:C01743	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne B : Paris Nord - St-Rémy / Robinson perturbé	<p>Le trafic est perturb&#233; entre Paris Gare du Nord et Saint-R&#233;my-l&#232;s-Chevreuse et entre Paris Gare du Nord et Robinson.<br><br>Motif : individus sur les voies &#224; Paris Nord.<br><br><br></p>	2023-05-20 19:26:33	2023-05-20 19:23:50	2023-05-20 22:24:16
+309	44eec14a-f72a-11ed-930a-0a58a9feac02	line:IDFM:C01728	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne D : Corbeil-Ess. - Melun ralenti	<p>Pr&#233;voir un allongement de temps de trajet de 25 minutes environ pour le train suivant :</p><p>- ZOVO, d&#233;part Juvisy 17h35, arriv&#233;e Melun 18h24.<br></p><p>Un signal est en d&#233;rangement en sortie de la gare de Corbeil-Essonnes. <br></p><p>Motif : panne sur les installations du gestionnaire de r&#233;seau en gare de Corbeil-Essonnes.<br></p>	2023-05-20 18:20:43	2023-05-20 18:14:50	2023-05-20 19:15:09
+310	463df500-f72c-11ed-b1d4-0a58a9feac02	line:IDFM:C01375	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 5 : Gêne à la fermeture des portes - Trafic perturbé	<p>Le trafic est perturbé sur l'ensemble de la ligne en raison d'une gêne à la fermeture des portes à Porte de Pantin<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 18:35:04	2023-05-20 18:31:00	2023-05-21 03:45:00
+311	f9577652-f72c-11ed-8b34-0a58a9feac02	line:IDFM:C01383	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 13 : Gêne à la fermeture des portes - Trafic perturbé	<p>Le trafic est perturbé sur l'ensemble de la ligne en raison d'une gêne à la fermeture des portes<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 18:40:05	2023-05-20 18:36:00	2023-05-21 03:45:00
+312	d9128256-f72c-11ed-8b34-0a58a9feac02	line:IDFM:C01728	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne D : ralentissements	<p>Le trafic est ralenti entre Paris Gare du Nord et Orry la Ville dans les 2 sens. <br></p><p>Une &#233;quipe de la s&#251;ret&#233; ferroviaire est en cours d&#8217;intervention pour interpeller les personnes sur les voies.</p><p><br></p><p>Motif : individus sur les voies dans le secteur de Paris Gare du Nord.<br></p>	2023-05-20 18:39:11	2023-05-20 18:34:37	2023-05-20 20:00:00
+313	4685db90-f731-11ed-8b34-0a58a9feac02	line:IDFM:C01742	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne A : ralentissements	<p>Le trafic est ralenti entre Marne-la-Vall&#233;e Chessy et Vincennes dans les 2 sens. <br></p><p><br></p><p>Motif : animal sur les voies dans le secteur de Neuilly-Plaisance.<br></p>	2023-05-20 19:10:52	2023-05-20 18:59:41	2023-05-20 20:00:00
+315	5203696c-f743-11ed-930a-0a58a9feac02	line:IDFM:C01382	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 12 : Incident (intervention agents) - Train stationne	<p>Le train stationne sur l'ensemble de la ligne en raison d'un incident nécessitant l’intervention de nos agents<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 21:20:03	2023-05-20 21:14:27	2023-05-20 22:00:27
+316	00940b56-f74b-11ed-8b34-0a58a9feac02	line:IDFM:C01371	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 1 : Incident affectant la voie - Reprise progressive / trafic reste perturbé	<p>Le trafic reprend mais reste perturbé sur l'ensemble de la ligne en raison d'un incident affectant la voie à Nation<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-20 22:15:02	2023-05-20 22:13:00	2023-05-21 03:45:00
+317	9d04e202-f74c-11ed-930a-0a58a9feac02	line:IDFM:C01742	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne A : ralentissements	<p>Le trafic est ralenti de Saint-Germain-en-Laye vers Boissy-Saint-L&#233;ger. <br><br>Motif : malaise voyageur (en gare de St Germain en Laye)</p>	2023-05-20 22:26:34	2023-05-20 22:24:39	2023-05-20 23:30:00
+318	4fb1bfa2-f88c-11ed-b1d4-0a58a9feac02	line:IDFM:C01376	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 6 : Panne de signalisation - Trafic perturbé	<p>Le trafic est perturbé sur l'ensemble de la ligne en raison d'une panne de signalisation à Place d'Italie<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-22 12:50:03	2023-05-22 12:44:00	2023-05-23 03:45:00
+319	d1618310-f888-11ed-930a-0a58a9feac02	line:IDFM:C01376	past	perturbation	#FF0000	NO_SERVICE	Métro 6 : Intervention des équipes techniques - Trafic interrompu	<p>Le trafic est interrompu entre Place d'Italie et Raspail en raison d'une intervention des équipes techniques à Place d'Italie<br>Heure de reprise estimée : 12h30.<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-22 12:35:02	2023-05-22 12:27:44	2023-05-22 12:28:44
+320	64dc5bcc-f895-11ed-b125-0a58a9feac02	line:IDFM:C01384	active	perturbation	#FF0000	NO_SERVICE	Métro 14 : Malaise voyageur - Trafic interrompu	<p>Le trafic est interrompu entre Saint-Lazare et Châtelet en raison d'un malaise voyageur à Madeleine<br>Heure de reprise estimée : 14h00.<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-22 13:40:04	2023-05-22 13:35:00	2023-05-23 03:45:00
+321	e3a15fd6-f898-11ed-8b34-0a58a9feac02	line:IDFM:C01373	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Métro 3 : Difficultés d'exploitation - Trafic perturbé	<p>Le trafic est perturbé sur l'ensemble de la ligne en raison de difficultés d'exploitation<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-22 14:05:05	2023-05-22 14:03:00	2023-05-23 03:45:00
+322	fbc00c28-f89a-11ed-b1d4-0a58a9feac02	line:IDFM:C01373	active	perturbation	#FF0000	NO_SERVICE	Métro 3 : Bagage oublié - Trafic interrompu	<p>Le trafic est interrompu entre Gambetta et Gallieni en raison d'un bagage oublié<br>Heure de reprise estimée : 15h30.<br><a href='http://www.ratp.fr'>Plus d'informations sur le site ratp.fr</a></p>	2023-05-22 14:20:05	2023-05-22 14:18:00	2023-05-22 16:15:00
+323	eac9af12-f89c-11ed-b1d4-0a58a9feac02	line:IDFM:C01728	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne D Melun - Corbeil-Ess. : suppressions	<p>Train supprim&#233; :<br>- ROSA, d&#233;part Melun 17h26, arriv&#233;e Corbeil-Essonnes 17h56.<br><br>Prochain train &#224; circuler :<br>- ROSA, d&#233;part Melun 17h41, arriv&#233;e Corbeil-Essonnes 18h11.<br></p><p><br></p><p>Train supprim&#233; : <br>- ZOSO, d&#233;part de Corbeil-Essonnes 18h17,&#160; arriv&#233;e Melun &#224; 18h47<br><br>Prochain train &#224; circuler : <br>- ZOSO, d&#233;part de Corbeil-Essonnes &#224; 18h32, arriv&#233;e Melun 19h02<br><br></p><p><br></p><p>Risque d'affluence &#224; bord des trains suivants.<br><br><br>Motif : conditions de d&#233;part non r&#233;unies (train immobilis&#233; en atelier de maintenance).<br><br><br></p>	2023-05-22 14:33:55	2023-05-22 14:25:34	2023-05-22 19:10:52
+324	c844b0ac-f89e-11ed-930a-0a58a9feac02	line:IDFM:C01728	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne D : Melun <-> Corbeil-Ess. suppressions	<p>Train supprim&#233; :<br>- ROSA, d&#233;part Melun 18h56, arriv&#233;e Corbeil-Essonnes 19h26.<br><br>Prochain train &#224; circuler :<br>- ROSA, d&#233;part&#160; Melun 19h11, arriv&#233;e Corbeil-Essonnes 19h41. <br></p><p>Train supprim&#233; : <br>- ZOSO, d&#233;part&#160; Corbeil-Essonnes&#160; 19h47, arriv&#233;e&#160; Melun 20h17. <br><br>Prochain train &#224; circuler : <br>- ZOSO, d&#233;part Corbeil-Essonnes 20h02, arriv&#233;e &#224; Melun 20h32. <br><br></p><p><br>Motif : conditions de d&#233;part non r&#233;unies (train immobilis&#233; en atelier de maintenance)</p>	2023-05-22 14:47:16	2023-05-22 14:37:58	2023-05-22 20:20:30
+325	8ca1b5f8-f89f-11ed-930a-0a58a9feac02	line:IDFM:C01728	active	perturbation	#EF662F	SIGNIFICANT_DELAYS	Ligne D Melun - Corbeil-Ess. : suppression	<p>Train supprim&#233; :<br>- ROSA d&#233;part Melun 19h56, arriv&#233;e Corbeil-Essonnes 20h26. <br><br>Prochain train &#224; circuler :<br>- ROSA d&#233;part Melun 20h26, arriv&#233;e Corbeil-Essonnes 20h56.<br><br>Risque d'affluence &#224; bord du train suivant.<br><br>Motif : conditions de d&#233;part non r&#233;unies (train immobilis&#233; en atelier de maintenance).<br></p><p><br></p><p><br></p>	2023-05-22 14:52:46	2023-05-22 14:48:59	2023-05-22 20:49:13
 \.
 
 
@@ -894,6 +954,38 @@ COPY public.log (id, created_at, disruption_id) FROM stdin;
 291	2023-05-20 00:31:22.181915	291
 292	2023-05-20 00:31:24.684992	292
 293	2023-05-20 01:44:56.47136	293
+294	2023-05-20 11:14:26.918809	294
+295	2023-05-20 11:14:28.721892	295
+296	2023-05-20 11:55:29.84773	296
+297	2023-05-20 12:35:47.296224	297
+298	2023-05-20 12:50:52.80042	298
+299	2023-05-20 13:16:04.022125	299
+300	2023-05-20 13:46:16.375074	300
+301	2023-05-20 13:51:16.597427	301
+302	2023-05-20 13:51:16.600227	302
+303	2023-05-20 13:51:18.646845	303
+304	2023-05-20 13:56:20.703073	304
+305	2023-05-20 14:01:20.905072	305
+306	2023-05-20 14:21:30.783017	306
+307	2023-05-20 14:21:30.787108	307
+308	2023-05-20 15:57:11.702258	308
+309	2023-05-20 16:22:20.948148	309
+310	2023-05-20 16:37:24.521053	310
+311	2023-05-20 16:42:26.362232	311
+312	2023-05-20 16:42:27.952318	312
+313	2023-05-20 17:12:39.044939	313
+314	2023-05-20 17:32:47.086727	314
+315	2023-05-20 19:23:27.543543	315
+316	2023-05-20 20:18:48.716789	316
+317	2023-05-20 20:28:53.789259	317
+318	2023-05-22 11:40:56.406525	318
+319	2023-05-22 11:40:56.412851	319
+320	2023-05-22 11:45:58.341727	320
+321	2023-05-22 12:11:07.216931	321
+322	2023-05-22 12:26:12.369059	322
+323	2023-05-22 12:36:17.861145	323
+324	2023-05-22 12:51:24.180475	324
+325	2023-05-22 12:56:25.880953	325
 \.
 
 
@@ -902,6 +994,24 @@ COPY public.log (id, created_at, disruption_id) FROM stdin;
 --
 
 COPY public.tickets (id, user_id, bet_id, bid, value, status) FROM stdin;
+1	1	1	t	300	opened
+2	2	1	f	200	opened
+3	1	2	t	3100	opened
+4	2	3	f	200	opened
+5	2	2	t	300	opened
+6	2	6	t	300	opened
+7	2	4	t	300	opened
+8	3	1	t	204	opened
+9	4	2	t	2000	opened
+10	5	2	t	500	opened
+11	6	3	t	1000	opened
+12	2	8	f	200	opened
+13	2	10	t	500	opened
+14	9	12	t	300	opened
+15	9	10	f	200	opened
+16	1	12	t	200	opened
+17	2	12	t	200	opened
+18	2	13	f	200	opened
 \.
 
 
@@ -910,6 +1020,16 @@ COPY public.tickets (id, user_id, bet_id, bid, value, status) FROM stdin;
 --
 
 COPY public.users (id, username, email, password, account_balance) FROM stdin;
+3	Alexandre	test@test.fr	$2a$10$ll5WsoBowsSuIvCxNT5d2OlWgD0BK2Z4JMGpUJpgxCR7FvnB17Et.	2796
+4	DanielBG	simadaniel@hotmail.com	$2a$10$EzV4.8i2y3IcO4h67sfzeu8H0LE6wp36AE04vZdwcLJGYqtvRZRu2	1000
+5	NOS	imp63871@nezid.com	$2a$10$KGXzBa3TotLuOXuM8OaT2eah5HUUqT1647VCSq04e9D6UlnOio19m	3100
+7	жопа	cji01836@iencm.com	$2a$10$1g3z.pQniwgNOaGO9LGCgORey3vMqfeJ9uKiPfyHSIZiujziK1Hdu	3000
+6	Georgette_Stroman69	your.email+fakedata16953@gmail.com	$2a$10$tm6qgATXa8zEqA07/Ny5LeL1f1cULyU5JZipOfaWrKK8PfnMx8kwS	2200
+8	Wacombot	wacimbot@gmail.com	$2a$10$cpPHdm4GyQeK/NfeHxFxbeI2Dei3qoM1ekPfp.gyct716yLaTFVuq	3200
+9	Arthuroo1	apendelliou@hotmail.fr	$2a$10$/4UIkdRf..LDdq/yiH9TKeCFZ2A6G13b.CxwbQ9mO9Oe4eG0asENi	2700
+2	Skullriver	test@test.ru	$2a$10$rPL7w/5EbIUCr3ibqhptGuTogueMwsxSMLJzS0UgiCBTV.2nFN8fa	1400
+10	Alina	test2@test.ru	$2a$10$olKqyTw.qTXQk/d7CYDkBuu3CH8hUDXv6EycMXfauRmrcCaqIiigq	3200
+1	LeDiable	amori.c2302@yahoo.fr	$2a$10$6vaWVQpqrf014jB.ubvYfubjuSViAvftq16qMUnzXORpil98Bw8Ym	200
 \.
 
 
@@ -917,14 +1037,14 @@ COPY public.users (id, username, email, password, account_balance) FROM stdin;
 -- Name: bet_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ps3r
 --
 
-SELECT pg_catalog.setval('public.bet_id_seq', 1, false);
+SELECT pg_catalog.setval('public.bet_id_seq', 15, true);
 
 
 --
 -- Name: disruptions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ps3r
 --
 
-SELECT pg_catalog.setval('public.disruptions_id_seq', 293, true);
+SELECT pg_catalog.setval('public.disruptions_id_seq', 325, true);
 
 
 --
@@ -938,21 +1058,21 @@ SELECT pg_catalog.setval('public.lines_id_seq', 21, true);
 -- Name: log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ps3r
 --
 
-SELECT pg_catalog.setval('public.log_id_seq', 293, true);
+SELECT pg_catalog.setval('public.log_id_seq', 325, true);
 
 
 --
 -- Name: tickets_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ps3r
 --
 
-SELECT pg_catalog.setval('public.tickets_id_seq', 1, false);
+SELECT pg_catalog.setval('public.tickets_id_seq', 18, true);
 
 
 --
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: ps3r
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 1, false);
+SELECT pg_catalog.setval('public.users_id_seq', 10, true);
 
 
 --

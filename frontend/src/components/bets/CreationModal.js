@@ -284,7 +284,7 @@ function CreationModal(args) {
                                         </FormGroup>
                                     </div>
                                     <FormGroup>
-                                        <Label for="value">Valeur</Label>
+                                        <Label for="value">Valeur &lt;=</Label>
                                         <Input
                                             type="number"
                                             name="value"
@@ -362,7 +362,7 @@ function CreationModal(args) {
                                         </Input>
                                     </FormGroup>
                                     <FormGroup>
-                                        <Label for="value">Valeur</Label>
+                                        <Label for="value">Valeur &lt;= </Label>
                                         <Input
                                             type="number"
                                             name="value"

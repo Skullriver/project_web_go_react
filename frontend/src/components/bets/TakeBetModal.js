@@ -181,7 +181,7 @@ function TakeBetModal(args) {
                                         <p>{selectedBet.num_type === 1 ? "%" : selectedBet.num_type === 2 ? "qté" : "error"}</p>
                                     </FormGroup>
                                     <FormGroup>
-                                        <Label for="value">Valeur</Label>
+                                        <Label for="value">Valeur &lt;=</Label>
                                         <p>{selectedBet.value}</p>
                                     </FormGroup>
                                 </div>
@@ -206,7 +206,7 @@ function TakeBetModal(args) {
                                         <p>{selectedBet.m_r}</p>
                                     </FormGroup>
                                     <FormGroup>
-                                        <Label for="value">Valeur</Label>
+                                        <Label for="value">Valeur &lt;=</Label>
                                         <p>{selectedBet.value}</p>
                                     </FormGroup>
                                 </div>

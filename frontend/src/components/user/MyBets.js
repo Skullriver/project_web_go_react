@@ -254,7 +254,7 @@ class MyBets extends Component {
                                                 <p>{this.state.selectedBet.num_type === 1 ? "%" : this.state.selectedBet.num_type === 2 ? "qté" : "error"}</p>
                                             </FormGroup>
                                             <FormGroup>
-                                                <Label for="value">Valeur</Label>
+                                                <Label for="value">Valeur &lt;=</Label>
                                                 <p>{this.state.selectedBet.value}</p>
                                             </FormGroup>
                                         </div>
@@ -279,7 +279,7 @@ class MyBets extends Component {
                                                 <p>{this.state.selectedBet.m_r}</p>
                                             </FormGroup>
                                             <FormGroup>
-                                                <Label for="value">Valeur</Label>
+                                                <Label for="value">Valeur &lt;=</Label>
                                                 <p>{this.state.selectedBet.value}</p>
                                             </FormGroup>
                                         </div>
@@ -342,7 +342,7 @@ class MyBets extends Component {
                                                 <p>{this.state.selectedTicketBet.num_type === 1 ? "%" : this.state.selectedTicketBet.num_type === 2 ? "qté" : "error"}</p>
                                             </FormGroup>
                                             <FormGroup>
-                                                <Label for="value">Valeur</Label>
+                                                <Label for="value">Valeur &lt;=</Label>
                                                 <p>{this.state.selectedTicketBet.value}</p>
                                             </FormGroup>
                                         </div>
@@ -367,7 +367,7 @@ class MyBets extends Component {
                                                 <p>{this.state.selectedTicketBet.m_r}</p>
                                             </FormGroup>
                                             <FormGroup>
-                                                <Label for="value">Valeur</Label>
+                                                <Label for="value">Valeur &lt;=</Label>
                                                 <p>{this.state.selectedTicketBet.value}</p>
                                             </FormGroup>
                                         </div>
